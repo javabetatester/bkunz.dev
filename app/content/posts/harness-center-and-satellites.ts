@@ -70,3 +70,141 @@ const post: Post = {
 };
 
 export default post;
+
+export const es: Post = {
+  slug: "harness-center-and-satellites",
+  category: "studies",
+  date: "2026-11-20",
+  published: "2026-11-21",
+  title: "Un centro, tres satélites",
+  summary: "Por qué la forma de trabajar del equipo vive en un repositorio y cada otro harness tiene el suyo, incorporado como submódulo en lugar de contenido copiado.",
+  tags: ["harness", "architecture", "git", "submodules"],
+  project: "versatile-sh",
+  sections: [
+    {
+      id: "problem",
+      title: "El problema de una carpeta grande",
+      blocks: [
+        { kind: "p", text: "Nuestra configuración para trabajar con agentes de IA empezó como un montón de instrucciones. Reglas, patrones, registros de proyectos, notas de infraestructura e investigación estaban todos juntos, y cada sesión cargaba lo que tuviera más cerca. Creció hasta que nadie podía decir qué archivo era dueño de qué dato." },
+        { kind: "p", text: "El harness del equipo (`versatile-sh/.claude`) mergeó los pull requests #166 a #178 el 2026-11-20, entre ellos el que restringió los repositorios del equipo a conocimiento de Versatile únicamente (#169). Es el día por el que fecho este post. Describe la forma que salió de ahí, no un resultado medido: no tengo números de antes y después, y no voy a inventarlos." },
+      ],
+    },
+    {
+      id: "shape",
+      title: "La forma",
+      blocks: [
+        { kind: "p", text: "El centro es `.claude`. Contiene solo cómo trabajamos: el archivo router, las guías de `docs/work/`, skills, agentes, comandos, las herramientas de `bin/` y los hooks. Nunca contiene una regla de ingeniería, un dato de proyecto, un handoff ni un log personal." },
+        { kind: "p", text: "Cada otro harness es un satélite con su propio repositorio:" },
+        { kind: "table", head: ["Repositorio", "Contiene"], rows: [
+          ["versatile-harness", "La base de conocimiento de ingeniería (premises, rules, patterns, standards, lints, design) y el hogar de registros de cada proyecto"],
+          ["hosting-harness", "Infraestructura y la configuración de deploy de cada app"],
+          ["research-harness", "El engine de investigación: método, estudios, estado"],
+          ["<domain>-media", "La copia canónica de cada imagen, video y fuente de diseño"],
+        ] },
+        { kind: "p", text: "El centro lleva los tres primeros como submódulos git bajo `harness/`. No se copia nada. Una sesión lee `harness/versatile-harness/` igual que cualquier otro archivo, y el contenido es lo que diga el `main` de ese satélite." },
+      ],
+    },
+    {
+      id: "why",
+      title: "Por qué repositorios separados",
+      blocks: [
+        { kind: "p", text: "La premisa está escrita en la base de conocimiento como un archivo corto, y su núcleo es una sola frase: un harness puede reducirse, reemplazarse e iterarse por sí solo, así que nunca se mete inline en el centro ni en otro harness." },
+        { kind: "list", items: [
+          "Distintos ritmos de cambio. La base de conocimiento recibe muchos pull requests pequeños al día. La forma de trabajar cambia pocas veces y afecta a todos. Mezclarlos hace que cada revisión trate de dos cosas.",
+          "Distintas audiencias. La configuración de deploy nunca debe viajar con el repositorio de un producto. Tenerla en su propio repositorio convierte esa frontera en una frontera de repositorio en lugar de una convención.",
+          "Reemplazabilidad. Si el engine de investigación resulta equivocado, puede reescribirse sin tocar el resto.",
+          "Una regla para cosas nuevas. Algo parecido a un harness sin repositorio todavía se propone como un nuevo `<name>-harness`. No se pliega en uno existente.",
+        ] },
+      ],
+    },
+    {
+      id: "rules",
+      title: "Las reglas que lo mantienen honesto",
+      blocks: [
+        { kind: "list", items: [
+          "La verdad de un satélite es su `main` en GitHub. La carpeta bajo `harness/` es una copia de lectura.",
+          "Nunca se edita bajo `harness/`. Se cambia la copia de trabajo hermana, en una rama, mediante un pull request.",
+          "Lo que una sesión aprende sobre Versatile va a un hogar compartido mediante un pull request, nunca solo a la memoria. Lo que aprende sobre cualquier otro proyecto se queda local, en una carpeta `local/` ignorada.",
+        ] },
+        { kind: "callout", tone: "note", text: "La segunda y la tercera regla son la razón por la que la separación rinde. Un dato tiene exactamente un hogar, y una búsqueda que cae en el repositorio equivocado no encuentra nada en lugar de una copia obsoleta." },
+      ],
+    },
+    {
+      id: "cost",
+      title: "Lo que cuesta",
+      blocks: [
+        { kind: "p", text: "Tres cosas se vuelven más difíciles. Un cambio que abarca el centro y un satélite necesita dos pull requests. Los punteros que registran qué commit de cada satélite lee el centro pueden quedar atrasados. Y una persona tiene que saber qué repositorio es dueño de un tema. La tabla de routing en el archivo router del centro existe para lo último. El siguiente post cubre la herramienta que maneja lo segundo." },
+        { kind: "p", text: "Creo que el intercambio es correcto, pero es un juicio tras días de uso por un equipo pequeño, no una medición. Si los pull requests de punteros empiezan a ser ruido, la respuesta será automatizarlos más, no volver a unir los repositorios." },
+      ],
+    },
+  ],
+};
+
+export const ptBr: Post = {
+  slug: "harness-center-and-satellites",
+  category: "studies",
+  date: "2026-11-20",
+  published: "2026-11-21",
+  title: "Um centro, três satélites",
+  summary: "Por que a forma de trabalhar da equipe vive em um repositório e cada outro harness tem o seu, incorporado como submódulo em vez de conteúdo copiado.",
+  tags: ["harness", "architecture", "git", "submodules"],
+  project: "versatile-sh",
+  sections: [
+    {
+      id: "problem",
+      title: "O problema de uma pasta grande",
+      blocks: [
+        { kind: "p", text: "Nossa configuração para trabalhar com agentes de IA começou como uma pilha de instruções. Regras, padrões, registros de projetos, notas de infraestrutura e pesquisa ficavam todos juntos, e cada sessão carregava o que estivesse mais perto. Cresceu até ninguém conseguir dizer qual arquivo era dono de qual fato." },
+        { kind: "p", text: "O harness da equipe (`versatile-sh/.claude`) mergeou os pull requests #166 a #178 em 2026-11-20, entre eles o que restringiu os repositórios da equipe a conhecimento do Versatile apenas (#169). É o dia pelo qual data este post. Ele descreve o formato que saiu daí, não um resultado medido: não tenho números de antes e depois, e não vou inventar nenhum." },
+      ],
+    },
+    {
+      id: "shape",
+      title: "O formato",
+      blocks: [
+        { kind: "p", text: "O centro é `.claude`. Ele guarda só como trabalhamos: o arquivo router, os guias de `docs/work/`, skills, agentes, comandos, as ferramentas de `bin/` e os hooks. Nunca guarda uma regra de engenharia, um fato de projeto, um handoff nem um log pessoal." },
+        { kind: "p", text: "Todo outro harness é um satélite com seu próprio repositório:" },
+        { kind: "table", head: ["Repositório", "Guarda"], rows: [
+          ["versatile-harness", "A base de conhecimento de engenharia (premises, rules, patterns, standards, lints, design) e o lar de registros de cada projeto"],
+          ["hosting-harness", "Infraestrutura e a configuração de deploy de cada app"],
+          ["research-harness", "O engine de pesquisa: método, estudos, estado"],
+          ["<domain>-media", "A cópia canônica de toda imagem, vídeo e fonte de design"],
+        ] },
+        { kind: "p", text: "O centro carrega os três primeiros como submódulos git sob `harness/`. Nada é copiado. Uma sessão lê `harness/versatile-harness/` do mesmo jeito que lê qualquer outro arquivo, e o conteúdo é o que o `main` daquele satélite disser." },
+      ],
+    },
+    {
+      id: "why",
+      title: "Por que repositórios separados",
+      blocks: [
+        { kind: "p", text: "A premissa está escrita na base de conhecimento como um arquivo curto, e o núcleo dela é uma única frase: um harness pode ser reduzido, substituído e iterado por si só, então nunca é embutido no centro nem em outro harness." },
+        { kind: "list", items: [
+          "Ritmos de mudança diferentes. A base de conhecimento recebe muitos pull requests pequenos por dia. A forma de trabalhar muda raramente e afeta todo mundo. Misturar os dois faz toda revisão tratar de duas coisas.",
+          "Públicos diferentes. A configuração de deploy nunca deve viajar com o repositório de um produto. Mantê-la em um repositório próprio faz dessa fronteira uma fronteira de repositório em vez de uma convenção.",
+          "Substituibilidade. Se o engine de pesquisa se mostrar errado, pode ser reescrito sem tocar no resto.",
+          "Uma regra para coisas novas. Algo parecido com um harness sem repositório ainda é proposto como um novo `<name>-harness`. Não é dobrado em um existente.",
+        ] },
+      ],
+    },
+    {
+      id: "rules",
+      title: "As regras que o mantêm honesto",
+      blocks: [
+        { kind: "list", items: [
+          "A verdade de um satélite é o `main` dele no GitHub. A pasta sob `harness/` é uma cópia de leitura.",
+          "Nunca edite sob `harness/`. Mude a cópia de trabalho irmã, em uma branch, por um pull request.",
+          "O que uma sessão aprende sobre o Versatile vai para um lar compartilhado por um pull request, nunca só para a memória. O que ela aprende sobre qualquer outro projeto fica local, em uma pasta `local/` ignorada.",
+        ] },
+        { kind: "callout", tone: "note", text: "A segunda e a terceira regra são o motivo de a separação compensar. Um fato tem exatamente um lar, e uma busca que cai no repositório errado não acha nada em vez de uma cópia obsoleta." },
+      ],
+    },
+    {
+      id: "cost",
+      title: "O que custa",
+      blocks: [
+        { kind: "p", text: "Três coisas ficam mais difíceis. Uma mudança que abrange o centro e um satélite precisa de dois pull requests. Os ponteiros que registram qual commit de cada satélite o centro lê podem ficar para trás. E uma pessoa precisa saber qual repositório é dono de um assunto. A tabela de routing no arquivo router do centro existe para o último. O próximo post cobre a ferramenta que cuida do segundo." },
+        { kind: "p", text: "Acho que a troca é certa, mas isso é um julgamento de dias de uso por uma equipe pequena, não uma medição. Se os pull requests de ponteiros começarem a virar ruído, a resposta será automatizá-los mais, não juntar os repositórios de novo." },
+      ],
+    },
+  ],
+};
