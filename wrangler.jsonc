@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bkunz-dev",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./build/client",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "env": {
+    "production": {
+      "name": "bkunz-dev-production",
+      "routes": [
+        { "pattern": "bkunz.dev", "custom_domain": true },
+        { "pattern": "www.bkunz.dev", "custom_domain": true }
+      ]
+    }
+  }
+}

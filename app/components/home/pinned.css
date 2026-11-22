@@ -1,0 +1,104 @@
+.pinned-prose {
+  max-width: 66ch;
+  margin-top: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: color-mix(in oklab, var(--color-fg) 86%, var(--color-canvas));
+}
+
+.pinned-prose > p + p {
+  margin-top: 1.25em;
+}
+
+.pinned-bar {
+  position: sticky;
+  top: var(--spacing-bar);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 2.25rem;
+  margin-top: 0.75rem;
+  margin-inline: calc(var(--spacing-gutter) * -1);
+  padding-inline: var(--spacing-gutter);
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-line);
+  font-size: var(--text-meta);
+  color: var(--color-muted);
+  white-space: pre;
+}
+
+.pinned-bar-fill {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent);
+  transform-origin: left;
+  transform: scaleX(var(--p));
+  transition: transform 420ms var(--ease-thumb);
+}
+
+.pinned-card {
+  position: sticky;
+  top: calc(var(--spacing-bar) + 1.5rem);
+  align-self: start;
+}
+
+.pinned-figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  aspect-ratio: 2 / 1;
+  padding: 1.25rem 1.5rem;
+  transition: border-color 280ms var(--ease-thumb);
+}
+
+.pinned-lines {
+  position: relative;
+  --line: 1.75rem;
+  padding-left: 1rem;
+}
+
+.pinned-line {
+  height: var(--line);
+  line-height: var(--line);
+  white-space: pre;
+  overflow: clip;
+  text-overflow: ellipsis;
+  color: var(--color-muted);
+  transition: color 280ms var(--ease-thumb);
+}
+
+.pinned-line[data-active="true"] {
+  color: var(--color-fg);
+}
+
+.pinned-lines::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: var(--line);
+  background: var(--color-accent);
+  transform: translateY(calc(var(--i) * var(--line)));
+  transition: transform 420ms var(--ease-thumb);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinned-lines::before,
+  .pinned-line,
+  .pinned-bar-fill {
+    transition: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .pinned-bar {
+    display: none;
+  }
+}
