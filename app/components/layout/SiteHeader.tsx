@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { IconBrandGithub, IconBrandLinkedin, IconBrandX, IconChevronDown, IconSearch } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandLinkedin, IconBrandX, IconChevronDown, IconSearch, IconTerminal2 } from "@tabler/icons-react";
 import { LANGS, LANG_LABEL, LINKS, TABS, type Lang, type Tab } from "~/content/copy";
 import { pagePath } from "~/content/pages";
 import { usePage } from "~/content/useCopy";
 import { irisNavigate } from "~/components/layout/iris";
 import { CommandPalette, usePaletteShortcut } from "~/components/layout/CommandPalette";
 
-const ICONS = { github: IconBrandGithub, linkedin: IconBrandLinkedin, x: IconBrandX } as const;
+const ICONS = { github: IconBrandGithub, linkedin: IconBrandLinkedin, x: IconBrandX, versatile: IconTerminal2 } as const;
 const LANG_NAME: Record<Lang, string> = { en: "English", es: "Español", "pt-br": "Português" };
 
 function TabLinks({ lang, tab, className }: { lang: Lang; tab: Tab; className: string }) {

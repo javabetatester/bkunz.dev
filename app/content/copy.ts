@@ -346,6 +346,7 @@ export const LINKS = [
   { id: "github", label: "github.com/javabetatester", short: "gh/javabetatester", href: "https://github.com/javabetatester" },
   { id: "linkedin", label: "linkedin.com/in/bernardokunz", short: "in/bernardokunz", href: "https://www.linkedin.com/in/bernardokunz/" },
   { id: "x", label: "x.com/jxstbk", short: "x/jxstbk", href: "https://x.com/jxstbk" },
+  { id: "versatile", label: "versatile.sh", short: "versatile.sh", href: "https://versatile.sh" },
 ] as const;
 
 export const langFromPath = (pathname: string): Lang =>

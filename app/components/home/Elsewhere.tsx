@@ -1,4 +1,4 @@
-import { IconArrowUpRight, IconBrandGithub, IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
+import { IconArrowUpRight, IconBrandGithub, IconBrandLinkedin, IconBrandX, IconTerminal2 } from "@tabler/icons-react";
 import { LINKS } from "~/content/copy";
 import { usePage } from "~/content/useCopy";
 
@@ -6,6 +6,7 @@ const BRAND = {
   github: { name: "GitHub", Icon: IconBrandGithub },
   linkedin: { name: "LinkedIn", Icon: IconBrandLinkedin },
   x: { name: "X", Icon: IconBrandX },
+  versatile: { name: "versatile.sh", Icon: IconTerminal2 },
 } as const;
 
 type DepthStyle = React.CSSProperties & { "--depth": number };
@@ -17,7 +18,7 @@ export function Elsewhere() {
     <section id="elsewhere" aria-labelledby="elsewhere-title" className="px-gutter">
       <h2 id="elsewhere-title" className="text-heading text-fg">{copy.elsewhere.title}</h2>
       <p className="mt-3 max-w-[60ch] text-title text-muted">{copy.elsewhere.lead}</p>
-      <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {LINKS.map((link, i) => {
           const { name, Icon } = BRAND[link.id];
           return (

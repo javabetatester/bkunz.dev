@@ -1,11 +1,12 @@
 import type { Block } from "~/content/docs/types";
+import { Linkified } from "~/components/docs/Linkified";
 import { SectionScene } from "~/components/iso/sections";
 
 /** Renders one typed documentation block. */
 export function DocBlock({ block, repo }: { block: Block; repo?: string }) {
   switch (block.kind) {
     case "p":
-      return <p className="max-w-[72ch] text-body text-fg/85">{block.text}</p>;
+      return <p className="max-w-[72ch] text-body text-fg/85"><Linkified text={block.text} /></p>;
     case "code":
       return (
         <figure className="overflow-hidden rounded-field border border-line bg-sunken">
@@ -23,7 +24,7 @@ export function DocBlock({ block, repo }: { block: Block; repo?: string }) {
         <ul className="flex max-w-[72ch] flex-col gap-2">
           {block.items.map((item) => (
             <li key={item} className="relative pl-5 text-body text-fg/85 before:absolute before:left-0 before:top-[0.8em] before:h-px before:w-2.5 before:bg-accent">
-              {item}
+              <Linkified text={item} />
             </li>
           ))}
         </ul>
@@ -37,7 +38,7 @@ export function DocBlock({ block, repo }: { block: Block; repo?: string }) {
                 {i + 1}
               </span>
               <span className="text-body text-fg">{step.title}</span>
-              <span className="max-w-[72ch] text-body text-muted">{step.text}</span>
+              <span className="max-w-[72ch] text-body text-muted"><Linkified text={step.text} /></span>
             </li>
           ))}
         </ol>
@@ -72,7 +73,7 @@ export function DocBlock({ block, repo }: { block: Block; repo?: string }) {
     case "callout":
       return (
         <p className={`max-w-[72ch] rounded-field border px-4 py-3 text-body ${block.tone === "warn" ? "border-amber/40 text-amber" : "border-line-strong text-fg/85"}`}>
-          {block.text}
+          <Linkified text={block.text} />
         </p>
       );
     case "scene":
