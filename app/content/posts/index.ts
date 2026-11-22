@@ -1,14 +1,20 @@
 import type { Lang } from "../copy";
 import type { Post } from "./types";
 
-const modules = import.meta.glob<{ default: Post | null }>(["./*.ts", "!./index.ts", "!./types.ts"], { eager: true });
+type PostModule = { default: Post | null; es?: Post; ptBr?: Post };
 
-const POSTS_EN: Post[] = Object.values(modules)
-  .map((m) => m.default)
-  .filter((p): p is Post => p !== null && !p.draft)
-  .sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
+const modules = import.meta.glob<PostModule>(["./*.ts", "!./index.ts", "!./types.ts"], { eager: true });
 
-export const POSTS: Record<Lang, Post[]> = { en: POSTS_EN, es: POSTS_EN, "pt-br": POSTS_EN };
+const sorted = (list: Post[]) => list.filter((p) => !p.draft).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
+
+const pick = (lang: Lang) =>
+  sorted(
+    Object.values(modules)
+      .filter((m): m is PostModule & { default: Post } => m.default !== null)
+      .map((m) => (lang === "es" ? m.es : lang === "pt-br" ? m.ptBr : undefined) ?? m.default),
+  );
+
+export const POSTS: Record<Lang, Post[]> = { en: pick("en"), es: pick("es"), "pt-br": pick("pt-br") };
 
 export const postFor = (slug: string, lang: Lang): Post | undefined =>
   POSTS[lang].find((p) => p.slug === slug) ?? POSTS.en.find((p) => p.slug === slug);
