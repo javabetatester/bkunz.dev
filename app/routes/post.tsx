@@ -4,6 +4,43 @@ import { DocShell } from "~/components/docs/DocShell";
 import { pagePath, postPath, projectPath } from "~/content/pages";
 import { POSTS, postFor } from "~/content/posts";
 import { usePage } from "~/content/useCopy";
+import { langFromPath } from "~/content/copy";
+import { ORIGIN, PERSON_ID, pageMeta } from "~/content/seo";
+import type { Route } from "./+types/post";
+
+export function meta({ params, location }: Route.MetaArgs) {
+  const lang = langFromPath(location.pathname);
+  const post = postFor(params.slug ?? "", lang);
+  if (!post) return [{ title: "not found · bkunz.dev" }];
+  return pageMeta({
+    lang,
+    pathFor: (l) => postPath(l, post.slug),
+    title: `${post.title} · Bernardo Kunz`,
+    description: post.summary,
+    type: "article",
+    published: post.published,
+    crumbs: [
+      { name: "bkunz.dev", path: pagePath(lang, "whoami") },
+      { name: "posts", path: pagePath(lang, "posts") },
+      { name: post.title, path: postPath(lang, post.slug) },
+    ],
+    extra: [
+      {
+        "@type": "TechArticle",
+        headline: post.title,
+        description: post.summary,
+        url: `${ORIGIN}${postPath(lang, post.slug)}`,
+        datePublished: post.published,
+        dateCreated: post.date,
+        inLanguage: lang === "pt-br" ? "pt-BR" : lang,
+        keywords: post.tags.join(", "),
+        articleSection: post.category,
+        author: { "@id": PERSON_ID },
+        ...(post.project === "versatile-sh" ? { about: { "@id": "https://versatile.sh/#organization" } } : {}),
+      },
+    ],
+  });
+}
 
 export default function PostPage() {
   const { slug = "" } = useParams();

@@ -98,7 +98,7 @@ const en: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Backend, distributed systems and security engineer. Durable execution, agent runtimes, tool gateways and edge execution, built as independent engines.",
+      "Bernardo Kunz: backend, distributed systems and AI engineer, founder of versatile.sh. Durable execution, agent runtimes, MCP gateways and LLM evals, with technical docs and studies.",
   },
   hero: {
     role: "Backend & AI engineer: agent orchestration, evals and guardrails on top of distributed systems and security, since 2016.",
@@ -180,7 +180,7 @@ const es: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Ingeniero de backend, sistemas distribuidos y seguridad. Ejecución durable, runtimes de agentes, gateways de herramientas y ejecución en el edge, construidos como engines independientes.",
+      "Bernardo Kunz: ingeniero de backend, sistemas distribuidos e IA, fundador de versatile.sh. Ejecución durable, runtimes de agentes, gateways MCP y evals de LLM, con docs técnicas y estudios.",
   },
   hero: {
     role: "Ingeniero de backend e IA: orquestación de agentes, evals y guardrails sobre sistemas distribuidos y seguridad, desde 2016.",
@@ -262,7 +262,7 @@ const ptBr: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Engenheiro de backend, sistemas distribuídos e segurança. Execução durável, runtimes de agentes, gateways de ferramentas e execução no edge, construídos como engines independentes.",
+      "Bernardo Kunz: engenheiro de backend, sistemas distribuídos e IA, fundador da versatile.sh. Execução durável, runtimes de agentes, gateways MCP e evals de LLM, com docs técnicas e estudos.",
   },
   hero: {
     role: "Engenheiro de backend e IA: orquestração de agentes, evals e guardrails sobre sistemas distribuídos e segurança, desde 2016.",

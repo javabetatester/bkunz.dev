@@ -10,6 +10,41 @@ import { pagePath, projectPath } from "~/content/pages";
 import { PAGES_COPY } from "~/content/pages-copy";
 import { PROJECTS } from "~/content/projects";
 import { usePage } from "~/content/useCopy";
+import { langFromPath } from "~/content/copy";
+import { ORIGIN, PERSON_ID, pageMeta } from "~/content/seo";
+import type { Route } from "./+types/project";
+
+export function meta({ params, location }: Route.MetaArgs) {
+  const lang = langFromPath(location.pathname);
+  const project = PROJECTS.find((p) => p.slug === params.slug);
+  if (!project) return [{ title: "not found · bkunz.dev" }];
+  const doc = docFor(project.slug, lang);
+  const description = doc?.tagline ?? project.summary[lang];
+  return pageMeta({
+    lang,
+    pathFor: (l) => projectPath(l, project.slug),
+    title: `${project.name} · technical doc · Bernardo Kunz`,
+    description,
+    type: "article",
+    crumbs: [
+      { name: "bkunz.dev", path: pagePath(lang, "whoami") },
+      { name: "projects", path: pagePath(lang, "projects") },
+      { name: project.name, path: projectPath(lang, project.slug) },
+    ],
+    extra: [
+      {
+        "@type": "SoftwareSourceCode",
+        name: project.name,
+        description,
+        url: `${ORIGIN}${projectPath(lang, project.slug)}`,
+        codeRepository: project.href,
+        programmingLanguage: project.lang,
+        author: { "@id": PERSON_ID },
+        ...(project.kind === "versatile.sh" ? { publisher: { "@id": "https://versatile.sh/#organization" } } : {}),
+      },
+    ],
+  });
+}
 
 const GROUP_LABEL: Record<DocSection["group"], string> = { start: "start", how: "how it works", deep: "low level", decisions: "decisions", reference: "reference" };
 

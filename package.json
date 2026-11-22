@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev --port 5173",
-    "build": "react-router build && cp build/client/__spa-fallback.html build/client/404.html",
+    "build": "react-router build && node scripts/postbuild.mjs",
     "preview": "vite preview --outDir build/client --port 4173",
     "typecheck": "react-router typegen && tsc --noEmit",
     "ship": "pnpm build && wrangler deploy",

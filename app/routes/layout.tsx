@@ -1,33 +1,30 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
-import { COPY, LANGS, langFromPath } from "~/content/copy";
+import { COPY, langFromPath } from "~/content/copy";
+import { ORIGIN, PERSON_ID, pageMeta } from "~/content/seo";
+import { PAGES_COPY } from "~/content/pages-copy";
 import { pagePath, tabFromPath } from "~/content/pages";
 import { SiteHeader } from "~/components/layout/SiteHeader";
 import { SiteFooter } from "~/components/layout/SiteFooter";
 import { usePage } from "~/content/useCopy";
 
-const ORIGIN = "https://bkunz.dev";
 
 export function meta({ location }: Route.MetaArgs) {
   const lang = langFromPath(location.pathname);
   const tab = tabFromPath(location.pathname);
-  const { title, description } = COPY[lang].meta;
+  const { title } = COPY[lang].meta;
+  const pages = PAGES_COPY[lang];
+  const description = tab === "whoami" ? COPY[lang].meta.description : tab === "work" ? pages.work.lede : tab === "projects" ? pages.projects.lede : pages.posts.lede;
   const pageTitle = tab === "whoami" ? title : `${tab} · ${title}`;
-  const url = `${ORIGIN}${pagePath(lang, tab)}`;
-  return [
-    { title: pageTitle },
-    { name: "description", content: description },
-    { property: "og:title", content: pageTitle },
-    { property: "og:description", content: description },
-    { property: "og:url", content: url },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary" },
-    { name: "twitter:creator", content: "@jxstbk" },
-    { tagName: "link", rel: "canonical", href: url },
-    ...LANGS.map((l) => ({ tagName: "link", rel: "alternate", hrefLang: l === "pt-br" ? "pt-BR" : l, href: `${ORIGIN}${pagePath(l, tab)}` })),
-    { tagName: "link", rel: "alternate", hrefLang: "x-default", href: `${ORIGIN}${pagePath("en", tab)}` },
-  ];
+  return pageMeta({
+    lang,
+    pathFor: (l) => pagePath(l, tab),
+    title: pageTitle,
+    description,
+    type: tab === "whoami" ? "profile" : "website",
+    extra: tab === "whoami" ? [{ "@type": "ProfilePage", url: `${ORIGIN}${pagePath(lang, "whoami")}`, mainEntity: { "@id": PERSON_ID } }] : [],
+  });
 }
 
 export default function Layout() {
