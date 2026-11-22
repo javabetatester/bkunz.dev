@@ -51,3 +51,93 @@ const post: Post = {
 };
 
 export default post;
+
+export const es: Post = {
+  ...post,
+  title: "Leer el mensaje entero de entrada",
+  summary: "Notas de un día midiendo la lectura frontal del asistente: p95 de las preguntas de datos de 6.14 a 3.14 s, una batería de precisión de 64/65 y 12 de 15 mensajes largos con varios temas respondidos sin el planner lento.",
+  sections: [
+    {
+      id: "change",
+      title: "Qué hace la lectura frontal",
+      blocks: [
+        { kind: "p", text: "En el asistente que construyo en el trabajo, los dueños suelen enviar un mensaje largo con varias preguntas. La lectura frontal es una sola llamada al modelo que divide el mensaje en pedidos. Cada pedido recibe su fragmento, lo que la persona quiere saber, la ruta de reporte que lo responde, el período y si es una comparación." },
+        { kind: "p", text: "Los pedidos se responden en paralelo, cada uno con su propio presupuesto de tiempo, y se componen en una sola respuesta en el orden en que se preguntó. Una parte que falla o se queda sin tiempo recibe una línea simple sobre ese tema, y las partes terminadas igual se entregan." },
+      ],
+    },
+    {
+      id: "measured",
+      title: "Qué medí hoy",
+      blocks: [
+        { kind: "p", text: "Configuración: el núcleo nativo, el lector de modelo en vivo, una compuerta de reportes simulada de 1.2 s, 20 pedidos de tipo dónde está y 20 pedidos de datos." },
+        {
+          kind: "table",
+          head: ["Tipo de pedido", "Antes p50 / p95", "Después p50 / p95"],
+          rows: [
+            ["dónde está", "0.90 / 3.40 s", "0.90 / 1.96 s"],
+            ["datos", "3.33 / 6.14 s", "2.49 / 3.14 s"],
+          ],
+        },
+        { kind: "list", items: [
+          "Batería de precisión: 64 de 65, con 79% de los tokens del prompt servidos desde caché.",
+          "15 mensajes largos de dueños: 12 respondieron todas las partes sin el planner. Los 3 fallos fueron permisos del fixture, no comportamiento.",
+          "Latencia de lectura: p50 1.34 s, p95 2.35 s.",
+        ] },
+      ],
+    },
+    {
+      id: "caveats",
+      title: "Cuánto confiar en esto",
+      blocks: [
+        { kind: "p", text: "Son 20 y 20 pedidos contra una compuerta simulada, así que el p95 es el 19.º o 20.º más lento de una muestra pequeña. La dirección es clara. El segundo decimal no." },
+        { kind: "p", text: "Hipótesis, no probada aquí: la mayor parte de la caída del p95 de datos viene de leer el mensaje una vez y enrutar directo a un reporte, de modo que se salta el planner lento. No corrí una ablación que lo aísle." },
+        { kind: "p", text: "La cifra de 12 de 15 tiene un límite más. Tres de los fallos fueron permisos del fixture, que puedo arreglar en el harness. No dicen nada sobre el asistente." },
+      ],
+    },
+  ],
+};
+
+export const ptBr: Post = {
+  ...post,
+  title: "Ler a mensagem inteira logo na entrada",
+  summary: "Notas de um dia medindo a leitura frontal do assistente: p95 das perguntas de dados de 6.14 para 3.14 s, uma bateria de acurácia de 64/65 e 12 de 15 mensagens longas com vários assuntos respondidas sem o planner lento.",
+  sections: [
+    {
+      id: "change",
+      title: "O que a leitura frontal faz",
+      blocks: [
+        { kind: "p", text: "No assistente que construo no trabalho, os donos costumam mandar uma mensagem longa com várias perguntas. A leitura frontal é uma única chamada ao modelo que divide a mensagem em pedidos. Cada pedido recebe seu trecho, o que a pessoa quer saber, a rota de relatório que o responde, o período e se é uma comparação." },
+        { kind: "p", text: "Os pedidos são respondidos em paralelo, cada um com seu próprio orçamento de tempo, e compostos em uma única resposta na ordem em que foram feitos. Uma parte que falha ou estoura o tempo recebe uma linha simples sobre aquele assunto, e as partes concluídas continuam sendo entregues." },
+      ],
+    },
+    {
+      id: "measured",
+      title: "O que medi hoje",
+      blocks: [
+        { kind: "p", text: "Configuração: o núcleo nativo, o leitor de modelo ao vivo, um portão de relatórios simulado de 1.2 s, 20 pedidos de onde está e 20 pedidos de dados." },
+        {
+          kind: "table",
+          head: ["Tipo de pedido", "Antes p50 / p95", "Depois p50 / p95"],
+          rows: [
+            ["onde está", "0.90 / 3.40 s", "0.90 / 1.96 s"],
+            ["dados", "3.33 / 6.14 s", "2.49 / 3.14 s"],
+          ],
+        },
+        { kind: "list", items: [
+          "Bateria de acurácia: 64 de 65, com 79% dos tokens do prompt servidos do cache.",
+          "15 mensagens longas de donos: 12 responderam todas as partes sem o planner. Os 3 erros foram permissões do fixture, não comportamento.",
+          "Latência de leitura: p50 1.34 s, p95 2.35 s.",
+        ] },
+      ],
+    },
+    {
+      id: "caveats",
+      title: "Quanto confiar nisso",
+      blocks: [
+        { kind: "p", text: "São 20 e 20 pedidos contra um portão simulado, então o p95 é o 19º ou 20º mais lento de uma amostra pequena. A direção é clara. A segunda casa decimal não." },
+        { kind: "p", text: "Hipótese, não testada aqui: a maior parte da queda do p95 de dados vem de ler a mensagem uma vez e rotear direto para um relatório, pulando o planner lento. Não rodei uma ablação que isole isso." },
+        { kind: "p", text: "O número 12 de 15 tem mais um limite. Três dos erros foram permissões do fixture, que posso corrigir no harness. Eles não dizem nada sobre o assistente." },
+      ],
+    },
+  ],
+};
