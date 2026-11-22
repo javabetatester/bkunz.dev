@@ -49,6 +49,8 @@ export const organization = {
   sameAs: ["https://github.com/versatile-sh"],
 };
 
+export const LOGO = `${ORIGIN}/icon-512.png`;
+
 const website = { "@type": "WebSite", "@id": `${ORIGIN}/#website`, url: `${ORIGIN}/`, name: "bkunz.dev", inLanguage: LANGS.map(hreflang), publisher: { "@id": PERSON_ID } };
 
 type Crumb = { name: string; path: string };
