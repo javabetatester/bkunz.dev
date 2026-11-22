@@ -8,11 +8,11 @@ const PAUSE = 260;
 
 const TONE = { fg: "hs-lead text-fg", accent: "hs-lead text-accent", muted: "hs-body text-muted" } as const;
 
-function Typed({ text, from, step }: { text: string; from: number; step: number }) {
+function Typed({ text, from, step, out = false }: { text: string; from: number; step: number; out?: boolean }) {
   return (
     <span aria-label={text} role="text">
       {Array.from(text, (ch, i) => (
-        <span key={i} aria-hidden="true" className="type-glyph" style={{ "--d": `${from + i * step}ms` } as CSSProperties}>
+        <span key={i} aria-hidden="true" className={out ? "type-glyph type-out" : "type-glyph"} style={{ "--d": `${from + i * step}ms` } as CSSProperties}>
           {ch}
         </span>
       ))}
@@ -48,7 +48,7 @@ export function HeroTerminal({ lines, start = 700 }: { lines: Line[]; start?: nu
               <Typed text={row.cmd} from={row.cmdAt} step={CMD_STEP} />
             </p>
             <p className={`max-w-[64ch] text-pretty ${TONE[row.tone]}`}>
-              <Typed text={row.out} from={row.outAt} step={OUT_STEP[row.tone]} />
+              <Typed text={row.out} from={row.outAt} step={OUT_STEP[row.tone]} out />
             </p>
           </div>
         ))}

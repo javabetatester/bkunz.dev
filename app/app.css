@@ -439,6 +439,14 @@
   from { opacity: 0; }
 }
 
+@media (max-width: 767px) {
+  .hero-fit .depth-in,
+  .hero-fit .occ-glyph,
+  .hero-fit .type-out {
+    animation: none;
+  }
+}
+
 .iso-bubble { fill: var(--color-fg); stroke: var(--color-canvas); }
 .iso-glyph { fill: var(--color-canvas); font-family: var(--font-mono); font-weight: 700; }
 
