@@ -69,6 +69,8 @@ type MetaInput = {
 /** Title, description, canonical, hreflang, Open Graph, Twitter and one JSON-LD graph for a page. */
 export function pageMeta({ lang, pathFor, title, description, type = "website", extra = [], crumbs, published }: MetaInput) {
   const url = `${ORIGIN}${pathFor(lang)}`;
+  const path = pathFor(lang).replace(/^\/(es|pt-br)(?=\/|$)/, "").replace(/^\/$/, "");
+  const tabTitle = `> ~/bkunz.dev${path}`;
   const graph: Record<string, unknown>[] = [person, organization, website, ...extra];
   if (crumbs?.length) {
     graph.push({
@@ -77,7 +79,7 @@ export function pageMeta({ lang, pathFor, title, description, type = "website", 
     });
   }
   return [
-    { title },
+    { title: tabTitle },
     { name: "description", content: description },
     { name: "author", content: "Bernardo Kunz" },
     { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },

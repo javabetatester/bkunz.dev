@@ -56,7 +56,7 @@ writeFileSync(join(OUT, "sitemap.xml"), xml);
 const en = [...groups.entries()].map(([rest, v]) => [rest, v.get("en")]).filter(([, r]) => r);
 const line = (r) => {
   const html = read(r);
-  return `- [${unescape(title(html))}](${ORIGIN}${r}): ${unescape(meta(html, "name", "description"))}`;
+  return `- [${unescape(meta(html, "property", "og:title") || title(html))}](${ORIGIN}${r}): ${unescape(meta(html, "name", "description"))}`;
 };
 const section = (label, test) => [`## ${label}`, "", ...en.filter(([rest]) => test(rest)).map(([, r]) => line(r)), ""];
 const llms = [
