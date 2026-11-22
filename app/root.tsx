@@ -2,6 +2,8 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, 
 import type { Route } from "./+types/root";
 import { langFromPath } from "./content/copy";
 import { CollisionProbe } from "./components/dev/CollisionProbe";
+import { SmoothScroll } from "./components/layout/SmoothScroll";
+import "lenis/dist/lenis.css";
 import "./app.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -21,6 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-canvas font-mono text-fg">
         {children}
+        <SmoothScroll />
         {import.meta.env.DEV ? <CollisionProbe /> : null}
         <ScrollRestoration />
         <Scripts />

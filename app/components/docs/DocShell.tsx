@@ -39,7 +39,7 @@ export function DocShell({ back, siblingsLabel, siblings, sections, children }: 
   return (
     <div className="lg:grid lg:grid-cols-[17.5rem_minmax(0,1fr)]">
       <aside className="border-b border-line bg-sunken/60 lg:sticky lg:top-[var(--spacing-bar)] lg:h-[calc(100svh-var(--spacing-bar))] lg:border-b-0 lg:border-r">
-        <div className="thin-scroll flex h-full flex-col gap-7 overflow-y-auto overscroll-contain px-5 py-6">
+        <div data-lenis-prevent className="thin-scroll flex h-full flex-col gap-7 overflow-y-auto overscroll-contain px-5 py-6">
           <Link to={back.href} onClick={(e) => irisNavigate(e, back.href, navigate)} className="group inline-flex items-center gap-2 text-meta text-muted hover:text-fg">
             <IconArrowLeft size={14} stroke={1.5} className="transition-transform duration-200 ease-thumb group-hover:-translate-x-0.5" />
             {back.label}

@@ -4,6 +4,10 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
 
 /** Glides the page to an element with an in-out curve, below the sticky header; instant under reduced motion. */
 export function glideTo(target: HTMLElement, offset = 0) {
+  if (window.__lenis) {
+    window.__lenis.scrollTo(target, { offset: -offset, duration: 1.1, easing: ease });
+    return;
+  }
   const startY = window.scrollY;
   const endY = Math.max(0, target.getBoundingClientRect().top + startY - offset);
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

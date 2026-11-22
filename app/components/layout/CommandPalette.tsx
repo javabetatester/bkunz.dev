@@ -76,11 +76,15 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
 
   useEffect(() => {
     if (!open) return;
+    window.__lenis?.stop();
     const previous = document.activeElement as HTMLElement | null;
     setQuery("");
     setIndex(0);
     input.current?.focus();
-    return () => previous?.focus();
+    return () => {
+      window.__lenis?.start();
+      previous?.focus();
+    };
   }, [open]);
 
   useEffect(() => {
@@ -133,7 +137,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
           />
           <kbd className="rounded-field border border-line-strong px-1.5 py-0.5 text-meta text-muted">esc</kbd>
         </div>
-        <ul ref={list} id="palette-results" role="listbox" className="thin-scroll flex-1 overflow-y-auto p-2">
+        <ul ref={list} id="palette-results" data-lenis-prevent role="listbox" className="thin-scroll flex-1 overflow-y-auto p-2">
           {results.length === 0 ? <li className="px-3 py-6 text-center text-meta text-faint">no match</li> : null}
           {results.map((item, i) => {
             const header = item.group !== last ? item.group : null;

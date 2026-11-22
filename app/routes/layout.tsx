@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
 import { COPY, langFromPath } from "~/content/copy";
@@ -30,9 +29,6 @@ export function meta({ location }: Route.MetaArgs) {
 export default function Layout() {
   const { tab } = usePage();
   const anchored = tab === "projects" || tab === "posts";
-  useEffect(() => {
-    document.documentElement.classList.toggle("snap-pages", anchored);
-  }, [anchored]);
   return (
     <div>
       <SiteHeader />

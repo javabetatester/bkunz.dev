@@ -22,7 +22,7 @@ export default function Page() {
                 {c.title}
               </h2>
               <p className="text-body text-muted">{c.body}</p>
-              <ul className="thin-scroll -mr-3 flex min-h-24 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain border-t border-line pr-3 pt-3 lg:min-h-0">
+              <ul data-lenis-prevent className="thin-scroll -mr-3 flex min-h-24 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain border-t border-line pr-3 pt-3 lg:min-h-0">
                 {POSTS[lang].filter((post) => post.category === c.id).map((post) => (
                   <li key={post.slug}>
                     <Link to={postPath(lang, post.slug)} className="group flex flex-col rounded-field px-2 py-1.5 hover:bg-canvas">
