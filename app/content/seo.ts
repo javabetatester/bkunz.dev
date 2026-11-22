@@ -31,12 +31,12 @@ export const person = {
     "LLM evaluation",
     "Application security",
   ],
-  founder: { "@id": ORG_ID },
+  worksFor: { "@id": ORG_ID },
+  affiliation: { "@id": ORG_ID },
   sameAs: [
     "https://www.linkedin.com/in/bernardokunz/",
     "https://github.com/javabetatester",
     "https://x.com/jxstbk",
-    "https://versatile.sh",
   ],
 };
 
