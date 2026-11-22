@@ -322,6 +322,648 @@ const en: ProjectDoc = {
   ],
 };
 
-const doc: Partial<Record<Lang, ProjectDoc>> = { en };
+const es: ProjectDoc = {
+  tagline: "Una pequeña organización llevada como side project: motores independientes, una forma compartida de trabajar con agentes de IA y los harnesses que mantienen honestas a ambas.",
+  status: "side project personal (organización, repositorios mayormente privados)",
+  facts: [
+    { label: "Forma", value: "una organización, no un repositorio" },
+    { label: "Sitio", value: "export estático de Next.js 16, servidor de formularios en Bun" },
+    { label: "Forma de trabajar", value: "un harness central más harnesses satélite" },
+    { label: "Visibilidad", value: "sitio y algunos motores públicos; harnesses privados" },
+  ],
+  sections: [
+    {
+      id: "overview",
+      title: "Visión general",
+      group: "start",
+      blocks: [
+        { kind: "p", text: "versatile-sh es la organización que llevo como side project. Está construida en torno a una idea: motores independientes. Cada motor hace un trabajo (workflows durables, un motor de pruebas, un motor de cómputo, un protocolo de plugins), mantiene un núcleo neutro que no nombra ningún producto y puede usarse sin los demás." },
+        { kind: "p", text: "La organización es también una forma de trabajar. Un equipo pequeño trabaja con agentes de IA, y el equipo aprende una sola vez: lo que una persona enseña a un agente se convierte en una regla, un registro o un lint compartidos en lugar de vivir en la memoria de una máquina." },
+        { kind: "p", text: "Este caso describe esa forma de trabajar en sentido seguro para lo público: la estructura, los flujos y las compuertas. Los repositorios de los harnesses son privados, así que sus rutas se nombran pero no se enlazan. Los motores aparecen por nombre en clave: nagare (workflow durable), hakoniwa (motor de pruebas), heya (motor de cómputo), tsugite (protocolo de plugins)." },
+        {
+          kind: "table",
+          head: ["Parte", "Qué es"],
+          rows: [
+            ["Motores", "Repositorios independientes con núcleos neutros, cada uno con su hogar de registros"],
+            ["Sitio de la empresa", "Export estático de Next.js 16, Tailwind CSS 4 y TypeScript, con directorios de conectores y skills y formularios"],
+            ["Harness central", "Cómo trabaja el equipo: router, docs de workflow, skills, agentes, comandos, hooks, herramientas"],
+            ["Harnesses satélite", "Conocimiento de ingeniería y registros de proyectos, configuración de infraestructura, motor de investigación, medios"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "bootstrap",
+      title: "Primeros pasos",
+      group: "start",
+      blocks: [
+        { kind: "p", text: "Un colaborador clona el harness central y los satélites que necesita, lado a lado, y luego ejecuta dos herramientas. bin/sync deja todo al día. bin/install enlaza los skills, agentes y comandos en cada checkout." },
+        {
+          kind: "code",
+          lang: "sh",
+          code: "bin/sync                 # fast-forward clean checkouts on main; move read copies to each satellite's main\nbin/install              # link skills, agents, commands into each versatile-sh checkout\nbin/install --with-hooks --with-timer   # team hooks and a daily sync + harvest timer\nbin/conformance          # what each repository misses from the baseline",
+          caption: "Bootstrap del harness",
+        },
+        {
+          kind: "list",
+          items: [
+            "bin/install escribe un symlink por cada skill, agente y comando, listado en el .git/info/exclude de cada proyecto para que no se versione nada en un proyecto.",
+            "Un elemento propio del proyecto con el mismo nombre gana sobre uno enlazado.",
+            "bin/install crea un área local/ que nunca se sube, para todo lo que no es parte de la organización, y construye una lista de exclusión personal a partir de tus otros checkouts.",
+            "bin/sync es idempotente: ejecutarlo dos veces no cambia nada la segunda vez. Nunca hace stash, reset ni cambia de rama.",
+            "--bump registra el main actual de cada satélite como puntero del submódulo, mediante un pull request.",
+          ],
+        },
+        { kind: "p", text: "El sitio de la empresa corre con mise, que instala Node.js, pnpm y Bun." },
+        {
+          kind: "code",
+          lang: "sh",
+          code: "mise run install\nmise run dev        # pages on http://localhost:3000, without the forms API\nmise run build      # static export into out/\nmise run preview    # out/ plus the forms API",
+          caption: "Sitio de la empresa",
+        },
+        {
+          kind: "table",
+          head: ["Variable", "Usada por", "Efecto"],
+          rows: [
+            ["DATA_DIR", "servidor del sitio", "Dónde se guarda la base de datos de formularios"],
+            ["CATALOG_DIR", "tareas del sitio", "Checkout del catálogo que leen mise run catalog y mise run skills"],
+            ["VERSATILE_CONFORMANCE=off", "bin/sync", "Omite la línea de resumen de conformidad"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "architecture",
+      title: "Arquitectura",
+      group: "how",
+      blocks: [
+        { kind: "scene", id: "versatile-sh/hub", caption: "El harness central es el eje; cada satélite es su propio repositorio, unido a él y nunca copiado dentro." },
+        { kind: "p", text: "El harness central es el único lugar que lo reúne todo. Cada otro harness es un satélite con su propio repositorio, incorporado como submódulo git bajo harness/ en el central. Nada se copia." },
+        {
+          kind: "code",
+          lang: "text",
+          code: "          versatile-sh/.claude   (center: how we work)\n          router, docs/work, skills, agents, commands, bin, hooks\n                         |\n     +-------------------+--------------------+--------------------+\n     |                   |                    |                    |\nversatile-harness   hosting-harness     research-harness     <domain>-media\nengineering rules   infra + deploy       method, studies,     canonical images,\nproject records     config per app       generated home       video, logos\n     |\n     +-- projects/<repo>/  profile, agents.md, adr/, roadmap, issues\n\nproject repositories: the product only (code, tests, README)",
+        },
+        {
+          kind: "table",
+          head: ["Harness", "Contiene"],
+          rows: [
+            ["Central (.claude)", "Cómo trabajamos: router, docs/work, skills, agentes, comandos, herramientas bin, hooks, la guía para colegas. Nunca reglas de ingeniería ni hechos de un proyecto"],
+            ["versatile-harness", "Base de conocimiento de ingeniería (premisas, reglas, patrones, estándares, lints, diseño, decisiones, arquitectura, índice de investigación) y el hogar de registros de cada proyecto"],
+            ["hosting-harness", "Infraestructura y configuración de despliegue de cada app"],
+            ["research-harness", "El motor de investigación: método, estudios, estado, un hogar de investigación generado"],
+            ["repositorios de medios", "La copia canónica de cada imagen, video, logo y fuente de diseño"],
+            ["Un repositorio de proyecto", "Solo el producto, escrito como si fuera público mañana"],
+          ],
+        },
+        { kind: "p", text: "La verdad de un satélite es su main en GitHub. La copia bajo harness/ es de solo lectura y bin/sync la mantiene en ese main. Un cambio se hace en la copia de trabajo hermana, en una rama, mediante un pull request." },
+        { kind: "p", text: "Todo lo que no es parte de la organización queda en local/ o en la memoria propia de cada persona. Lo inverso también vale: nada sobre la organización tiene la memoria personal como único hogar." },
+      ],
+    },
+    {
+      id: "learning-loop",
+      title: "Bucle de aprendizaje",
+      group: "how",
+      blocks: [
+        { kind: "scene", id: "versatile-sh/loop", caption: "Un problema recurrente recorre corrección, prueba, confirmación del dueño, guard y registro, y el guard evita que vuelva." },
+        { kind: "p", text: "Cuando un problema se repite o alguien repite una petición, la respuesta es un protocolo fijo. La memoria en una máquina no es aprendizaje, y una regla solo en prosa volverá a romperse." },
+        {
+          kind: "steps",
+          items: [
+            { title: "Reconocer la clase", text: "Nombrar el problema como una clase, por ejemplo valores de color crudos en componentes. Revisar primero los issues abiertos y el catálogo de lints." },
+            { title: "Corregir la causa raíz", text: "El cambio más pequeño que elimina la causa, no un parche sobre el síntoma." },
+            { title: "Certificar", text: "Un test que falla primero o un antes y después, más un barrido de otras instancias de la clase." },
+            { title: "Pedir confirmación", text: "Una línea al dueño. La certificación pertenece al agente, la confirmación al dueño." },
+            { title: "Codificar el guard", text: "Solo tras un sí explícito: un lint, check, test o ratchet, probado reintroduciendo el error una vez, y registrado en el catálogo de lints en la misma unidad de trabajo." },
+            { title: "Registrar y compartir", text: "Un pull request en el hogar compartido. Los colegas lo reciben en su próximo pull." },
+          ],
+        },
+        { kind: "p", text: "Si el dueño no responde, la corrección y su test de regresión se quedan, el issue se marca como corregido pero no confirmado y no se agrega ningún guard para toda la clase. Por separado, cuando una persona hace algo mejor de lo que describe el harness, se registra como práctica de campo bajo el archivo que es dueño del tema y reemplaza el texto de la regla en su segundo caso confirmado." },
+      ],
+    },
+    {
+      id: "pr-gate",
+      title: "Compuerta del pull request",
+      group: "how",
+      blocks: [
+        { kind: "scene", id: "versatile-sh/gate", caption: "El torniquete solo gira cuando la nota de conocimiento de la sesión está en la caja; entonces la rama llega a main." },
+        { kind: "p", text: "En todo repositorio de versatile-sh el trabajo llega a main solo mediante un pull request desde una rama de feature, integrado con un merge commit tras la validación local. No hay push directo, ni force-push ni reescritura de historial sin la aprobación explícita del dueño." },
+        {
+          kind: "steps",
+          items: [
+            { title: "Rama", text: "git fetch, luego un worktree en una rama de feature desde origin/main. Los commits son granulares, uno por responsabilidad, cada uno compilando." },
+            { title: "Validar en local", text: "El único comando de check del repositorio. Los workflows de CI son manuales y no bloquean nada, así que la evidencia en el pull request es la prueba." },
+            { title: "Checklist de conocimiento de la sesión", text: "Antes de abrir el pull request, actualizar lo que la sesión cambió o aprendió: el README y los docs del proyecto, los registros en versatile-harness, cualquier regla, patrón o lint que surgió y el harness central si cambió la forma de trabajar. Cada uno va por su propio pull request." },
+            { title: "Registrarlo", text: "bin/pr-ready guarda las respuestas del checklist para la rama. El hook sobre gh pr create retiene el comando hasta que exista ese registro. Caduca al cabo de un día." },
+            { title: "Merge y limpieza", text: "gh pr merge --merge --delete-branch, borrar la rama local, eliminar el worktree, todo en la misma unidad de trabajo. Se informa al dueño en el chat de lo que se actualizó, con enlaces." },
+          ],
+        },
+        { kind: "callout", tone: "note", text: "La compuerta es simbólica y falla abierta. Se satisface solo haciendo el checklist, no se aplica a los propios repositorios de harness y deja pasar cualquier otro comando." },
+      ],
+    },
+    {
+      id: "research-flow",
+      title: "Método de investigación",
+      group: "how",
+      blocks: [
+        { kind: "p", text: "Las decisiones reales pasan por un único motor, el research harness. Un estudio respalda una decisión del dueño, y un estudio que no puede nombrar su decisión no empieza. Su método se reescribió a partir de lo que la investigación anterior hizo bien y mal, y se enmienda después de cada estudio." },
+        {
+          kind: "steps",
+          items: [
+            { title: "Intake", text: "El dueño responde las preguntas antes de empezar cualquier trabajo, registradas con la fecha." },
+            { title: "Recuperar", text: "Lo que ya está cerrado sobre el tema, con su fecha y commit." },
+            { title: "Charter", text: "Decisión, unidad de análisis, regla de juicio, niveles de prueba, pisos, alcance, asientos y presupuesto. El dueño lo libera." },
+            { title: "Ataque al marco", text: "Un red team objeta la pregunta y las premisas antes de que exista cualquier respuesta." },
+            { title: "Inventario y exploración", text: "Un inventario ciego construido desde el usuario hacia afuera y desde el código hacia adentro, luego una tabla macro de candidatos. El dueño elige qué profundizar." },
+            { title: "Rondas", text: "Propuestas, objeciones, decisiones, auditoría y spikes, liberados por tandas. El dueño decide tras cada tanda." },
+            { title: "Síntesis y cierre", text: "Un mapa o matriz, decisiones del dueño con recomendaciones, elementos diferidos con un disparador, una auditoría final por un auditor que no es el juez y una retro que enmienda el método." },
+          ],
+        },
+        { kind: "p", text: "Una pregunta acotada que una fuente resuelve es investigación puntual y se salta las rondas. Una elección dentro de una tarea recibe una matriz de decisión de diez líneas en el cuerpo del pull request, escrita antes de ejecutar los candidatos." },
+      ],
+    },
+    {
+      id: "premises",
+      title: "Premisas",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "Una premisa es un supuesto permanente del que parte todo diseño y que no se vuelve a discutir en cada tarea. Cada una tiene su propio archivo pequeño en versatile-harness/premises/." },
+        {
+          kind: "table",
+          head: ["Premisa", "Qué significa para un diseño"],
+          rows: [
+            ["Público mañana", "Todo repositorio de proyecto se escribe como si fuera público mañana"],
+            ["Núcleo neutro", "Un núcleo no nombra ningún producto, cliente, proveedor ni proyecto hermano"],
+            ["Registros privados", "Los registros son privados y viven en un solo lugar"],
+            ["Un artefacto, cada despliegue", "Un artefacto sirve para cada despliegue"],
+            ["Los secretos son referencias", "Un secreto es una referencia en todas partes salvo en el store y el proceso que lo necesita"],
+            ["Sin datos de clientes", "Ningún dato de cliente, empleador ni personal en ningún sitio"],
+            ["Validación local", "Ningún job remoto bloquea un pull request"],
+            ["Solo pull requests", "El trabajo llega a main solo mediante un pull request"],
+            ["Evidencia antes de terminar", "Nada se da por hecho sin evidencia"],
+            ["Los registros cambian con el código", "La misma unidad de trabajo, el mismo flujo de pull request"],
+            ["Equipo pequeño con IA", "El equipo aprende una sola vez"],
+            ["Cada harness su propio repositorio", "El central enlaza satélites, nunca los copia"],
+          ],
+        },
+        { kind: "p", text: "Un repositorio de proyecto contiene solo el producto. Ningún ADR, runbook, investigación, configuración de despliegue, host ni proceso interno aparece en sus archivos, commits, cuerpos de pull request ni nombres de rama. Eso es lo que hace comprobable la premisa de público mañana." },
+      ],
+    },
+    {
+      id: "gates",
+      title: "Compuertas y lints",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "Todo cambio sube por las mismas compuertas, de la más barata a la más cara, todas en la máquina del desarrollador. Una compuerta comprueba una cosa, tiene un hogar de config y llama al único comando de check del repositorio, mise run check, en lugar de reimplementarlo." },
+        {
+          kind: "table",
+          head: ["Compuerta", "Comprueba"],
+          rows: [
+            ["Editor y formato", "Formato y lint rápido mientras se escribe"],
+            ["Pre-commit", "Formato y lint solo de AST de los archivos staged, corregidos y vueltos a stagear"],
+            ["Pre-push y check", "Linters sobre los paquetes cambiados desde el merge base; el check completo bajo demanda"],
+            ["Compuerta de conocimiento", "El checklist de la sesión se registra antes de gh pr create"],
+            ["Revisión", "Ejes de estándares y de spec, mediante /review o /pre-pr"],
+            ["Compuerta de merge", "El commit integrado es el que selló la validación; solo donde un repositorio la tiene"],
+            ["Catálogo de lints", "Un error recurrente confirmado se convierte en un lint compartido que todo proyecto activa"],
+            ["Bootstrap de repositorio nuevo", "Dependabot, Semgrep, lefthook, LICENSE, SECURITY.md, estándar de README, go-lint para Go"],
+            ["Conformidad de la organización", "bin/conformance lista lo que le falta a cada repositorio"],
+          ],
+        },
+        { kind: "p", text: "El catálogo de lints lista cada lint una vez con el problema que previene, dónde está implementado y qué proyectos lo activaron. Los ejemplos incluyen una compuerta de neutralidad para núcleos de motores, una tabla de aristas de dependencias, una comprobación de comentarios, un clock seam, una comprobación de entorno en la raíz de composición y una compuerta Semgrep con ratchet sobre el merge base. Las comprobaciones de Go vienen de un único kit compartido, go-lint." },
+        { kind: "p", text: "Los pull requests de Dependabot nunca se dejan ociosos: cada uno se revisa e integra, se corrige e integra, se migra o se planifica en un issue con su versión ignorada." },
+      ],
+    },
+    {
+      id: "proof-levels",
+      title: "Niveles de prueba",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "Una afirmación necesita evidencia que otra persona pueda reproducir, mostrada como antes y después, con la línea base capturada primero. Hay una sola escala, y cada celda de un ADR, estudio o matriz de decisión usa posiciones de ella." },
+        {
+          kind: "table",
+          head: ["Nivel", "Evidencia", "Sirve para"],
+          rows: [
+            ["S", "Comportamiento observado en el sistema en ejecución: capturas, salida real de comandos, petición y respuesta reales", "UI, comportamiento de extremo a extremo, despliegues"],
+            ["A", "Un test que falló antes del cambio y pasa después", "Bugs, condiciones de carrera, reglas"],
+            ["B", "Tests dirigidos, comprobación de tipos, lint y build, todo en verde", "Refactors, cambios internos"],
+            ["C", "Leí el código y debería funcionar", "Nada: no es evidencia"],
+          ],
+        },
+        {
+          kind: "table",
+          head: ["Cambio", "Evidencia mínima"],
+          rows: [
+            ["Feature", "A, más S cuando tiene interfaz de usuario"],
+            ["Corrección de bug", "A: el test que falla primero"],
+            ["Refactor", "B, tests de comportamiento sin cambios y en verde"],
+            ["Configuración o despliegue", "S: observado en el sistema en ejecución"],
+            ["Cambio visual", "S: capturas en ancho de escritorio y de teléfono"],
+            ["Afirmación de rendimiento", "S o A con números, mismas condiciones antes y después"],
+          ],
+        },
+        { kind: "p", text: "En los estudios, las etiquetas leído, especificado y ejecutado se corresponden con esta escala. Una afirmación leída solo es válida como un hecho sobre su fuente, con versión y fecha. Nunca es prueba de que nuestro cambio funcione." },
+      ],
+    },
+    {
+      id: "company-site",
+      title: "Sitio de la empresa",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "El sitio es un export estático de Next.js 16 con App Router, Tailwind CSS 4 y TypeScript. Un pequeño servidor Bun reparte el export y guarda los formularios en SQLite, a partir del schema en migrations/." },
+        {
+          kind: "list",
+          items: [
+            "Páginas de la empresa, más directorios /connectors y /skills construidos a partir de dos catálogos de archivos simples.",
+            "Formularios: lista de espera, contacto y envíos de conectores y skills. La validación de leads vive en lib/leads.ts.",
+            "POST /api/leads aplica una comprobación de mismo origen, un límite de 8 KB, un honeypot y un límite de tasa por dirección.",
+            "El servidor responde / con un espejo en Markdown cuando la petición pide text/markdown; el sitio también ofrece rutas de descubrimiento llms.txt.",
+            "El sitio no incluye configuración de despliegue. Las reglas de diseño están en DESIGN.md.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "decisions",
+      title: "Decisiones",
+      group: "decisions",
+      blocks: [
+        {
+          kind: "table",
+          head: ["Decisión", "Elegido", "Descartado", "Por qué"],
+          rows: [
+            ["Forma de las herramientas", "Un harness central más satélites como submódulos", "Un monorepo; contenido copiado", "Cada responsabilidad tiene su propio historial y verdad; el central enlaza, nunca copia"],
+            ["Entrega", "Pull request, merge commit, validación local", "Push directo; squash; compuerta de CI remoto", "Main se mantiene limpio y cada merge se revierte como una unidad; un job remoto que nunca corre no bloquea nada"],
+            ["Aprendizaje", "Guard tras la confirmación del dueño, registrado una vez", "Solo memoria; copias por repositorio", "La prosa se vuelve a romper; las copias discrepan"],
+            ["Hogar del conocimiento", "Registros en un satélite privado", "ADRs y runbooks en los repos de producto", "Un repositorio de producto debe poder publicarse mañana"],
+            ["Investigación", "Un estudio con charter, juez y auditor independientes", "Una sola pasada de un agente", "Una sola pasada es un borrador, nunca un resultado"],
+            ["Prueba", "Una escala S, A, B, C", "Escalas por documento", "Todo es comparable"],
+            ["Comando de check", "Un mise run check por repositorio", "Makefiles y scripts ad hoc", "Dos definiciones de verde se desvían"],
+          ],
+        },
+        {
+          kind: "list",
+          items: [
+            "La compuerta de merge existe solo en algunos repositorios de producto; en los demás la evidencia en el pull request es la compuerta.",
+            "La compuerta de conocimiento es simbólica y falla abierta si su hook da error.",
+            "Los harnesses y varios motores son privados, así que este caso no puede enlazarlos.",
+            "Algunos lints figuran con una implementación aún no verificada; la herramienta de conformidad informa lo que a cada repositorio todavía le falta.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "files",
+      title: "Archivos",
+      group: "reference",
+      blocks: [
+        { kind: "p", text: "Las rutas de los harnesses son privadas y relativas a cada repositorio de harness." },
+        {
+          kind: "files",
+          items: [
+            { path: ".claude/CLAUDE.md", note: "Router del harness central: alcance, reglas innegociables, tabla de enrutamiento" },
+            { path: ".claude/docs/work/01-WORKFLOW.md", note: "El bucle de trabajo, la matriz de decisión, la condición de parada" },
+            { path: ".claude/docs/work/03-EVIDENCE.md", note: "Niveles de prueba y antes y después" },
+            { path: ".claude/docs/work/04-LEARNING-LOOP.md", note: "Problema recurrente a guard a registro compartido" },
+            { path: ".claude/docs/work/06-GIT-AND-PRS.md", note: "Reglas de git y el checklist de conocimiento de la sesión" },
+            { path: ".claude/docs/work/10-GATES.md", note: "La escalera de compuertas" },
+            { path: ".claude/bin/sync", note: "Actualiza checkouts y copias de lectura de los satélites" },
+            { path: ".claude/bin/install", note: "Enlaza skills, agentes, comandos; hooks y timer" },
+            { path: ".claude/bin/conformance", note: "Comprobación de la línea base en toda la organización" },
+            { path: "versatile-harness/premises/00-INDEX.md", note: "Índice de las premisas permanentes" },
+            { path: "versatile-harness/rules/00-INDEX.md", note: "Índice de reglas de ingeniería" },
+            { path: "versatile-harness/lints/00-INDEX.md", note: "El catálogo de lints" },
+            { path: "research-harness/docs/methodology.md", note: "Reglas de estudio, etapas y niveles de prueba" },
+            { path: "versatile.sh/lib/leads.ts", note: "Validación de leads del sitio" },
+            { path: "versatile.sh/DESIGN.md", note: "Reglas de diseño del sitio" },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+const ptBr: ProjectDoc = {
+  tagline: "Uma pequena organização tocada como side project: motores independentes, um jeito compartilhado de trabalhar com agentes de IA e os harnesses que mantêm os dois honestos.",
+  status: "side project pessoal (organização, repositórios em sua maioria privados)",
+  facts: [
+    { label: "Formato", value: "uma organização, não um repositório" },
+    { label: "Site", value: "export estático do Next.js 16, servidor de formulários em Bun" },
+    { label: "Jeito de trabalhar", value: "um harness central mais harnesses satélites" },
+    { label: "Visibilidade", value: "site e alguns motores públicos; harnesses privados" },
+  ],
+  sections: [
+    {
+      id: "overview",
+      title: "Visão geral",
+      group: "start",
+      blocks: [
+        { kind: "p", text: "versatile-sh é a organização que eu toco como side project. Ela é construída em torno de uma ideia: motores independentes. Cada motor faz um trabalho (workflows duráveis, um motor de testes, um motor de computação, um protocolo de plugins), mantém um núcleo neutro que não nomeia nenhum produto e pode ser usado sem os outros." },
+        { kind: "p", text: "A organização também é um jeito de trabalhar. Um time pequeno trabalha com agentes de IA, e o time aprende uma vez só: o que uma pessoa ensina a um agente vira uma regra, um registro ou um lint compartilhado em vez de ficar na memória de uma máquina." },
+        { kind: "p", text: "Este case descreve esse jeito de trabalhar de forma segura para o público: a estrutura, os fluxos e os gates. Os repositórios dos harnesses são privados, então seus caminhos são nomeados mas não linkados. Os motores aparecem por codinome: nagare (workflow durável), hakoniwa (motor de testes), heya (motor de computação), tsugite (protocolo de plugins)." },
+        {
+          kind: "table",
+          head: ["Parte", "O que é"],
+          rows: [
+            ["Motores", "Repositórios independentes com núcleos neutros, cada um com seu lar de registros"],
+            ["Site da empresa", "Export estático de Next.js 16, Tailwind CSS 4 e TypeScript, com diretórios de conectores e skills e formulários"],
+            ["Harness central", "Como o time trabalha: router, docs de workflow, skills, agentes, comandos, hooks, ferramentas"],
+            ["Harnesses satélites", "Conhecimento de engenharia e registros dos projetos, config de infraestrutura, motor de pesquisa, mídia"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "bootstrap",
+      title: "Primeiros passos",
+      group: "start",
+      blocks: [
+        { kind: "p", text: "Quem contribui clona o harness central e os satélites de que precisa, lado a lado, e roda duas ferramentas. bin/sync deixa tudo em dia. bin/install liga os skills, agentes e comandos em cada checkout." },
+        {
+          kind: "code",
+          lang: "sh",
+          code: "bin/sync                 # fast-forward clean checkouts on main; move read copies to each satellite's main\nbin/install              # link skills, agents, commands into each versatile-sh checkout\nbin/install --with-hooks --with-timer   # team hooks and a daily sync + harvest timer\nbin/conformance          # what each repository misses from the baseline",
+          caption: "Bootstrap do harness",
+        },
+        {
+          kind: "list",
+          items: [
+            "bin/install escreve um symlink por skill, agente e comando, listado no .git/info/exclude de cada projeto para que nada seja commitado num projeto.",
+            "Um item do próprio projeto com o mesmo nome vence um item linkado.",
+            "bin/install cria uma área local/ que nunca é enviada, para tudo que não faz parte da organização, e monta uma lista de bloqueio pessoal a partir dos seus outros checkouts.",
+            "bin/sync é idempotente: rodar duas vezes não muda nada na segunda. Ele nunca faz stash, reset nem troca de branch.",
+            "--bump registra o main atual de cada satélite como ponteiro do submódulo, por um pull request.",
+          ],
+        },
+        { kind: "p", text: "O site da empresa roda com o mise, que instala Node.js, pnpm e Bun." },
+        {
+          kind: "code",
+          lang: "sh",
+          code: "mise run install\nmise run dev        # pages on http://localhost:3000, without the forms API\nmise run build      # static export into out/\nmise run preview    # out/ plus the forms API",
+          caption: "Site da empresa",
+        },
+        {
+          kind: "table",
+          head: ["Variável", "Usada por", "Efeito"],
+          rows: [
+            ["DATA_DIR", "servidor do site", "Onde o banco de dados dos formulários é guardado"],
+            ["CATALOG_DIR", "tarefas do site", "Checkout do catálogo lido por mise run catalog e mise run skills"],
+            ["VERSATILE_CONFORMANCE=off", "bin/sync", "Pula a linha de resumo de conformidade"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "architecture",
+      title: "Arquitetura",
+      group: "how",
+      blocks: [
+        { kind: "scene", id: "versatile-sh/hub", caption: "O harness central é o eixo; cada satélite é seu próprio repositório, ligado a ele e nunca copiado para dentro." },
+        { kind: "p", text: "O harness central é o único lugar que reúne tudo. Todo outro harness é um satélite com seu próprio repositório, trazido como submódulo git em harness/ no central. Nada é copiado." },
+        {
+          kind: "code",
+          lang: "text",
+          code: "          versatile-sh/.claude   (center: how we work)\n          router, docs/work, skills, agents, commands, bin, hooks\n                         |\n     +-------------------+--------------------+--------------------+\n     |                   |                    |                    |\nversatile-harness   hosting-harness     research-harness     <domain>-media\nengineering rules   infra + deploy       method, studies,     canonical images,\nproject records     config per app       generated home       video, logos\n     |\n     +-- projects/<repo>/  profile, agents.md, adr/, roadmap, issues\n\nproject repositories: the product only (code, tests, README)",
+        },
+        {
+          kind: "table",
+          head: ["Harness", "Guarda"],
+          rows: [
+            ["Central (.claude)", "Como trabalhamos: router, docs/work, skills, agentes, comandos, ferramentas bin, hooks, o guia para colegas. Nunca regras de engenharia nem fatos de um projeto"],
+            ["versatile-harness", "Base de conhecimento de engenharia (premissas, regras, padrões, standards, lints, design, decisões, arquitetura, índice de pesquisa) e o lar de registros de cada projeto"],
+            ["hosting-harness", "Infraestrutura e a configuração de deploy de cada app"],
+            ["research-harness", "O motor de pesquisa: método, estudos, estado, um lar de pesquisa gerado"],
+            ["repositórios de mídia", "A cópia canônica de toda imagem, vídeo, logo e fonte de design"],
+            ["Um repositório de projeto", "Só o produto, escrito como se fosse público amanhã"],
+          ],
+        },
+        { kind: "p", text: "A verdade de um satélite é o seu main no GitHub. A cópia em harness/ é somente leitura e o bin/sync a mantém nesse main. Uma mudança é feita na cópia de trabalho irmã, numa branch, por um pull request." },
+        { kind: "p", text: "Tudo que não faz parte da organização fica em local/ ou na memória própria de cada pessoa. O inverso também vale: nada sobre a organização tem a memória pessoal como único lar." },
+      ],
+    },
+    {
+      id: "learning-loop",
+      title: "Ciclo de aprendizado",
+      group: "how",
+      blocks: [
+        { kind: "scene", id: "versatile-sh/loop", caption: "Um problema recorrente percorre correção, prova, confirmação do dono, guard e registro, e o guard impede que ele volte." },
+        { kind: "p", text: "Quando um problema se repete ou alguém repete um pedido, a resposta é um protocolo fixo. Memória numa máquina não é aprendizado, e uma regra só em prosa será quebrada de novo." },
+        {
+          kind: "steps",
+          items: [
+            { title: "Reconhecer a classe", text: "Nomear o problema como uma classe, por exemplo valores de cor crus em componentes. Conferir primeiro as issues abertas e o catálogo de lints." },
+            { title: "Corrigir a causa raiz", text: "A menor mudança que remove a causa, não um remendo no sintoma." },
+            { title: "Certificar", text: "Um teste que falha primeiro ou um antes e depois, mais uma varredura por outras instâncias da classe." },
+            { title: "Pedir confirmação", text: "Uma linha para o dono. A certificação é do agente, a confirmação é do dono." },
+            { title: "Codificar o guard", text: "Só depois de um sim explícito: um lint, check, teste ou ratchet, provado reintroduzindo o erro uma vez, e registrado no catálogo de lints na mesma unidade de trabalho." },
+            { title: "Registrar e compartilhar", text: "Um pull request no lar compartilhado. Os colegas recebem no próximo pull." },
+          ],
+        },
+        { kind: "p", text: "Se o dono não responde, a correção e seu teste de regressão ficam, a issue é marcada como corrigida mas não confirmada, e nenhum guard para a classe inteira é adicionado. Separadamente, quando uma pessoa faz algo melhor do que o harness descreve, isso é registrado como prática de campo no arquivo dono do tema e substitui o texto da regra no segundo caso confirmado." },
+      ],
+    },
+    {
+      id: "pr-gate",
+      title: "Gate do pull request",
+      group: "how",
+      blocks: [
+        { kind: "scene", id: "versatile-sh/gate", caption: "A catraca só gira quando a nota de conhecimento da sessão está na caixa; aí a branch chega ao main." },
+        { kind: "p", text: "Em todo repositório versatile-sh o trabalho chega ao main só por um pull request a partir de uma feature branch, integrado com um merge commit depois da validação local. Não há push direto, nem force-push ou reescrita de histórico sem a aprovação explícita do dono." },
+        {
+          kind: "steps",
+          items: [
+            { title: "Branch", text: "git fetch, depois um worktree numa feature branch a partir de origin/main. Os commits são granulares, um por responsabilidade, cada um compilando." },
+            { title: "Validar localmente", text: "O único comando de check do repositório. Os workflows de CI são manuais e não bloqueiam nada, então a evidência no pull request é a prova." },
+            { title: "Checklist de conhecimento da sessão", text: "Antes de abrir o pull request, atualizar o que a sessão mudou ou aprendeu: o README e os docs do projeto, os registros no versatile-harness, qualquer regra, padrão ou lint que surgiu e o harness central se o jeito de trabalhar mudou. Cada um vai por seu próprio pull request." },
+            { title: "Registrar", text: "bin/pr-ready guarda as respostas do checklist para a branch. O hook em gh pr create segura o comando até esse registro existir. Ele expira em um dia." },
+            { title: "Merge e limpeza", text: "gh pr merge --merge --delete-branch, apagar a branch local, remover o worktree, tudo na mesma unidade de trabalho. O dono é avisado no chat do que foi atualizado, com links." },
+          ],
+        },
+        { kind: "callout", tone: "note", text: "O gate é simbólico e falha aberto. Ele se satisfaz apenas fazendo o checklist, não se aplica aos próprios repositórios de harness e deixa passar qualquer outro comando." },
+      ],
+    },
+    {
+      id: "research-flow",
+      title: "Método de pesquisa",
+      group: "how",
+      blocks: [
+        { kind: "p", text: "As decisões reais passam por um único motor, o research harness. Um estudo sustenta uma decisão do dono, e um estudo que não consegue nomear sua decisão não começa. O método foi reescrito a partir do que pesquisas anteriores fizeram bem e mal, e é emendado depois de cada estudo." },
+        {
+          kind: "steps",
+          items: [
+            { title: "Intake", text: "O dono responde as perguntas antes de qualquer trabalho começar, registradas com a data." },
+            { title: "Recuperar", text: "O que já está fechado sobre o tema, com data e commit." },
+            { title: "Charter", text: "Decisão, unidade de análise, regra de julgamento, níveis de prova, pisos, escopo, assentos e orçamento. O dono libera." },
+            { title: "Ataque ao enquadramento", text: "Um red team questiona a pergunta e as premissas antes de existir qualquer resposta." },
+            { title: "Inventário e exploração", text: "Um inventário cego construído do usuário para fora e do código para dentro, depois uma tabela macro de candidatos. O dono escolhe o que aprofundar." },
+            { title: "Rodadas", text: "Propostas, objeções, decisões, auditoria e spikes, liberados em lotes. O dono decide depois de cada lote." },
+            { title: "Síntese e encerramento", text: "Um mapa ou matriz, decisões do dono com recomendações, itens adiados com um gatilho, uma auditoria final por um auditor que não é o juiz e uma retro que emenda o método." },
+          ],
+        },
+        { kind: "p", text: "Uma pergunta estreita que uma fonte resolve é pesquisa pontual e pula as rodadas. Uma escolha dentro de uma tarefa recebe uma matriz de decisão de dez linhas no corpo do pull request, escrita antes de os candidatos rodarem." },
+      ],
+    },
+    {
+      id: "premises",
+      title: "Premissas",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "Uma premissa é uma suposição permanente de que todo design parte e que não é rediscutida a cada tarefa. Cada uma tem seu próprio arquivo pequeno em versatile-harness/premises/." },
+        {
+          kind: "table",
+          head: ["Premissa", "O que significa para um design"],
+          rows: [
+            ["Público amanhã", "Todo repositório de projeto é escrito como se fosse público amanhã"],
+            ["Núcleo neutro", "Um núcleo não nomeia produto, cliente, fornecedor nem projeto irmão"],
+            ["Registros privados", "Os registros são privados e vivem em um só lugar"],
+            ["Um artefato, todo deploy", "Um artefato serve a todo deploy"],
+            ["Segredos são referências", "Um segredo é uma referência em todo lugar, exceto no store e no processo que precisa dele"],
+            ["Sem dados de clientes", "Nenhum dado de cliente, empregador ou pessoal em lugar nenhum"],
+            ["Validação local", "Nenhum job remoto bloqueia um pull request"],
+            ["Só pull requests", "O trabalho chega ao main só por um pull request"],
+            ["Evidência antes de concluir", "Nada está pronto sem evidência"],
+            ["Os registros mudam com o código", "Mesma unidade de trabalho, mesmo fluxo de pull request"],
+            ["Time pequeno com IA", "O time aprende uma vez só"],
+            ["Cada harness seu próprio repositório", "O central liga satélites, nunca os copia"],
+          ],
+        },
+        { kind: "p", text: "Um repositório de projeto guarda só o produto. Nenhum ADR, runbook, pesquisa, config de deploy, host ou processo interno aparece em seus arquivos, commits, corpos de pull request ou nomes de branch. É isso que torna testável a premissa do público amanhã." },
+      ],
+    },
+    {
+      id: "gates",
+      title: "Gates e lints",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "Toda mudança sobe pelos mesmos gates, do mais barato ao mais caro, todos na máquina de quem desenvolve. Um gate checa uma coisa, tem um lar de config e chama o único comando de check do repositório, mise run check, em vez de reimplementá-lo." },
+        {
+          kind: "table",
+          head: ["Gate", "Checa"],
+          rows: [
+            ["Editor e formatação", "Formatação e lint rápido enquanto se digita"],
+            ["Pre-commit", "Formatação e lint só de AST dos arquivos staged, corrigidos e re-staged"],
+            ["Pre-push e check", "Linters nos pacotes alterados desde o merge base; o check completo sob demanda"],
+            ["Gate de conhecimento", "O checklist da sessão é registrado antes de gh pr create"],
+            ["Revisão", "Eixos de standards e de spec, por /review ou /pre-pr"],
+            ["Gate de merge", "O commit integrado é o que a validação carimbou; só onde o repositório tem um"],
+            ["Catálogo de lints", "Um erro recorrente confirmado vira um lint compartilhado que todo projeto ativa"],
+            ["Bootstrap de repositório novo", "Dependabot, Semgrep, lefthook, LICENSE, SECURITY.md, padrão de README, go-lint para Go"],
+            ["Conformidade da organização", "bin/conformance lista o que cada repositório ainda não tem"],
+          ],
+        },
+        { kind: "p", text: "O catálogo de lints lista cada lint uma vez com o problema que previne, onde está implementado e quais projetos o ativaram. Exemplos incluem um gate de neutralidade para núcleos de motores, uma tabela de arestas de dependência, uma checagem de comentários, um clock seam, uma checagem de ambiente na raiz de composição e um gate Semgrep com ratchet no merge base. As checagens de Go vêm de um único kit compartilhado, o go-lint." },
+        { kind: "p", text: "Pull requests do Dependabot nunca ficam ociosos: cada um é revisado e integrado, corrigido e integrado, migrado ou planejado numa issue com sua versão ignorada." },
+      ],
+    },
+    {
+      id: "proof-levels",
+      title: "Níveis de prova",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "Uma afirmação precisa de evidência que outra pessoa consiga reproduzir, mostrada como antes e depois, com a linha de base capturada primeiro. Há uma única escala, e toda célula de ADR, estudo ou matriz de decisão usa posições dela." },
+        {
+          kind: "table",
+          head: ["Nível", "Evidência", "Serve para"],
+          rows: [
+            ["S", "Comportamento observado no sistema em execução: screenshots, saída real de comandos, requisição e resposta reais", "UI, comportamento de ponta a ponta, deploys"],
+            ["A", "Um teste que falhou antes da mudança e passa depois", "Bugs, race conditions, regras"],
+            ["B", "Testes direcionados, checagem de tipos, lint e build, tudo verde", "Refactors, mudanças internas"],
+            ["C", "Li o código e deve funcionar", "Nada: não é evidência"],
+          ],
+        },
+        {
+          kind: "table",
+          head: ["Mudança", "Evidência mínima"],
+          rows: [
+            ["Feature", "A, mais S quando tem interface de usuário"],
+            ["Correção de bug", "A: o teste que falha primeiro"],
+            ["Refactor", "B, testes de comportamento inalterados e verdes"],
+            ["Configuração ou deploy", "S: observado no sistema em execução"],
+            ["Mudança visual", "S: screenshots em largura de desktop e de celular"],
+            ["Alegação de desempenho", "S ou A com números, mesmas condições antes e depois"],
+          ],
+        },
+        { kind: "p", text: "Nos estudos, os rótulos lido, especificado e executado mapeiam para esta escala. Uma afirmação lida só vale como um fato sobre a sua fonte, com versão e data. Nunca é prova de que a nossa mudança funciona." },
+      ],
+    },
+    {
+      id: "company-site",
+      title: "Site da empresa",
+      group: "deep",
+      blocks: [
+        { kind: "p", text: "O site é um export estático do Next.js 16 com App Router, Tailwind CSS 4 e TypeScript. Um pequeno servidor Bun entrega o export e guarda os formulários em SQLite, a partir do schema em migrations/." },
+        {
+          kind: "list",
+          items: [
+            "Páginas da empresa, mais diretórios /connectors e /skills construídos a partir de dois catálogos de arquivos simples.",
+            "Formulários: lista de espera, contato e envios de conectores e skills. A validação de leads fica em lib/leads.ts.",
+            "POST /api/leads aplica uma checagem de mesma origem, um limite de 8 KB, um honeypot e um limite de taxa por endereço.",
+            "O servidor responde / com um espelho em Markdown quando a requisição pede text/markdown; o site também entrega rotas de descoberta llms.txt.",
+            "O site não traz configuração de deploy. As regras de design estão em DESIGN.md.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "decisions",
+      title: "Decisões",
+      group: "decisions",
+      blocks: [
+        {
+          kind: "table",
+          head: ["Decisão", "Escolhido", "Rejeitado", "Por quê"],
+          rows: [
+            ["Formato das ferramentas", "Um harness central mais satélites como submódulos", "Um monorepo; conteúdo copiado", "Cada responsabilidade tem seu histórico e sua verdade; o central liga, nunca copia"],
+            ["Entrega", "Pull request, merge commit, validação local", "Push direto; squash; gate de CI remoto", "O main fica limpo e cada merge reverte como uma unidade; um job remoto que nunca roda não bloqueia nada"],
+            ["Aprendizado", "Guard após confirmação do dono, registrado uma vez", "Só memória; cópias por repositório", "Prosa é quebrada de novo; cópias divergem"],
+            ["Lar do conhecimento", "Registros num satélite privado", "ADRs e runbooks nos repos de produto", "Um repositório de produto precisa poder ser publicado amanhã"],
+            ["Pesquisa", "Um estudo com charter, juiz e auditor independentes", "Uma passada única de um agente", "Uma passada única é rascunho, nunca resultado"],
+            ["Prova", "Uma escala S, A, B, C", "Escalas por documento", "Tudo é comparável"],
+            ["Comando de check", "Um mise run check por repositório", "Makefiles e scripts ad hoc", "Duas definições de verde divergem"],
+          ],
+        },
+        {
+          kind: "list",
+          items: [
+            "O gate de merge existe só em alguns repositórios de produto; nos demais a evidência no pull request é o gate.",
+            "O gate de conhecimento é simbólico e falha aberto se seu hook der erro.",
+            "Os harnesses e vários motores são privados, então este case não pode linká-los.",
+            "Alguns lints constam com implementação ainda não verificada; a ferramenta de conformidade reporta o que cada repositório ainda não tem.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "files",
+      title: "Arquivos",
+      group: "reference",
+      blocks: [
+        { kind: "p", text: "Os caminhos dos harnesses são privados e relativos a cada repositório de harness." },
+        {
+          kind: "files",
+          items: [
+            { path: ".claude/CLAUDE.md", note: "Router do harness central: escopo, regras inegociáveis, tabela de roteamento" },
+            { path: ".claude/docs/work/01-WORKFLOW.md", note: "O ciclo de trabalho, a matriz de decisão, a condição de parada" },
+            { path: ".claude/docs/work/03-EVIDENCE.md", note: "Níveis de prova e antes e depois" },
+            { path: ".claude/docs/work/04-LEARNING-LOOP.md", note: "Problema recorrente para guard para registro compartilhado" },
+            { path: ".claude/docs/work/06-GIT-AND-PRS.md", note: "Regras de git e o checklist de conhecimento da sessão" },
+            { path: ".claude/docs/work/10-GATES.md", note: "A escada de gates" },
+            { path: ".claude/bin/sync", note: "Atualiza checkouts e cópias de leitura dos satélites" },
+            { path: ".claude/bin/install", note: "Liga skills, agentes, comandos; hooks e timer" },
+            { path: ".claude/bin/conformance", note: "Checagem da linha de base em toda a organização" },
+            { path: "versatile-harness/premises/00-INDEX.md", note: "Índice das premissas permanentes" },
+            { path: "versatile-harness/rules/00-INDEX.md", note: "Índice das regras de engenharia" },
+            { path: "versatile-harness/lints/00-INDEX.md", note: "O catálogo de lints" },
+            { path: "research-harness/docs/methodology.md", note: "Regras de estudo, etapas e níveis de prova" },
+            { path: "versatile.sh/lib/leads.ts", note: "Validação de leads do site" },
+            { path: "versatile.sh/DESIGN.md", note: "Regras de design do site" },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+const doc: Partial<Record<Lang, ProjectDoc>> = { en, es, "pt-br": ptBr };
 
 export default doc;

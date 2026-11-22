@@ -235,6 +235,472 @@ const doc: Partial<Record<Lang, ProjectDoc>> = {
       },
     ],
   },
+  es: {
+    tagline: "Un único libro mayor para cada cuenta, clave y router de Claude Code, Codex y Grok, cada uno abierto con la sesión iniciada en su propia carpeta home.",
+    status: "código disponible (GPL-3.0-or-later)",
+    facts: [
+      { label: "Lenguaje", value: "Rust 1.89+" },
+      { label: "Licencia", value: "GPL-3.0-or-later" },
+      { label: "Binarios", value: "vvault, vvault-app (bandeja Tauri)" },
+      { label: "Plataformas", value: "Linux, macOS, Windows" },
+    ],
+    sections: [
+      {
+        id: "overview",
+        title: "Visión general",
+        group: "start",
+        blocks: [
+          { kind: "p", text: "agents-vault mantiene un libro mayor de cada cuenta, clave de API y router de Claude Code, Codex y Grok que usas. Eliges una cuenta y se abre una terminal con la sesión ya iniciada, en el modelo correcto y con tus instrucciones compartidas en su sitio. Un icono en la bandeja muestra los límites de 5 horas y semanales de cada cuenta." },
+          { kind: "p", text: "El problema que elimina es compartir credenciales entre cuentas. Cada cuenta tiene su propia carpeta home, así que un refresh token que rota existe en un solo lugar. Nunca guarda, copia ni renueva un token OAuth: el inicio de sesión, la renovación y el cierre de sesión quedan en manos de claude, codex y grok." },
+          { kind: "p", text: "Corre en tu máquina como un workspace de Rust: una librería core, el comando vvault y una app de bandeja Tauri. No está afiliado a Anthropic, OpenAI ni xAI." },
+          {
+            kind: "table",
+            head: ["Crate o ruta", "Función"],
+            rows: [
+              ["crates/core", "libro mayor, lanzador, llavero, límites, keep-alive"],
+              ["crates/cli", "el comando vvault"],
+              ["app/src-tauri", "backend de la app de bandeja"],
+              ["app/ui", "interfaz de la bandeja en HTML, CSS y JS simples, sin paso de build"],
+            ],
+          },
+        ],
+      },
+      {
+        id: "bootstrap",
+        title: "Instalar y ejecutar",
+        group: "start",
+        blocks: [
+          { kind: "p", text: "Requisitos: Rust 1.89 o posterior y, para la app de bandeja, las dependencias de sistema de Tauri 2." },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "git clone https://github.com/versatile-sh/agents-vault\ncd agents-vault\ncargo install --path crates/cli\ncargo build --release -p vvault-app --features custom-protocol",
+            caption: "pon vvault-app junto a vvault, o deja vvault en el PATH; los instaladores salen de cargo tauri build en app/src-tauri",
+          },
+          { kind: "p", text: "Con un libro mayor nuevo, vvault list responde: No accounts yet. Try `vvault add work` or `vvault adopt personal`." },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "vvault add work                       # official Claude Code sign-in\nvvault add team --harness codex       # official Codex sign-in\nvvault add x --harness grok           # official Grok sign-in\nvvault adopt personal                 # track your existing ~/.claude in place\nvvault list\nvvault open work                      # new terminal window on that account\nvvault run work -- --resume           # same, in the current terminal\nvvault default work                   # plain `claude` now means the work account",
+          },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "vvault add router --base-url https://openrouter.ai/api --bearer --model vendor/model\nvvault provider add OpenRouter --preset openrouter --model vendor/model-a\nvvault use OpenRouter --with codex --model vendor/model-b\nvvault kit claude --dir ~/.claude\nvvault keepalive                      # exit code 1 when an account needs a new sign-in\nvvault waybar                         # JSON for a status bar",
+          },
+          {
+            kind: "table",
+            head: ["Variable", "Por defecto", "Efecto"],
+            rows: [["VVAULT_HOME", "la carpeta de datos de la plataforma", "mueve el libro mayor, para mantener los experimentos lejos de las cuentas reales"]],
+          },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "mise run check            # rustfmt, clippy, tests, Semgrep\nmise run test             # cargo test --workspace\nmise run dev -- list      # the CLI against a throwaway ledger in /tmp/vvault-dev",
+          },
+        ],
+      },
+      {
+        id: "architecture",
+        title: "Arquitectura",
+        group: "how",
+        blocks: [
+          { kind: "scene", id: "agents-vault/architecture", caption: "La bandeja y la CLI comparten un store, que guarda un casillero privado por cuenta y arranca cada harness desde el suyo." },
+          { kind: "p", text: "crates/core contiene todo el comportamiento. La CLI y el backend de Tauri son front ends finos sobre el mismo Store y las mismas funciones, así que la app de bandeja y vvault siempre coinciden." },
+          {
+            kind: "code",
+            lang: "text",
+            code: "tray app / vvault CLI\n        |\n        v\n   store::Store  --- ledger.json (labels, models, paths; 0600)\n        |             profiles/<id>/   (one harness home per account)\n        |             limits/ status/ balance/ caches\n        v\n   launch::plan  --- secrets (OS keychain, read last)\n        |\n        v\n   claude | codex | grok   with CLAUDE_CONFIG_DIR / CODEX_HOME / GROK_HOME",
+          },
+          {
+            kind: "list",
+            items: [
+              "model.rs: Harness (Claude, Codex, Grok), Auth (Login o ApiKey), Account, Config, Provider.",
+              "launch.rs: construye el Launch (programa, args, env) y limpia el entorno heredado.",
+              "limits.rs, status.rs, balance.rs, claude.rs, codex.rs: leen límites, estado de sesión y saldos por harness.",
+              "kit.rs: enlaza instrucciones compartidas en los perfiles. machine.rs: la cuenta por defecto de toda la máquina.",
+              "terminal.rs: abre una ventana de terminal que reentra mediante vvault run.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "open-flow",
+        title: "Abrir una cuenta",
+        group: "how",
+        blocks: [
+          { kind: "scene", id: "agents-vault/open-flow", caption: "Las variables de identidad se descartan en una compuerta y la clave sale del llavero solo en el lanzamiento." },
+          {
+            kind: "steps",
+            items: [
+              { title: "Elegir", text: "Eliges una cuenta en la app de bandeja o ejecutas vvault open. La terminal ejecuta vvault run <id>, así que la clave se resuelve dentro de ese proceso." },
+              { title: "Validar", text: "launch::plan llama a Account::validate, y luego ensure_home crea el directorio del perfil, privado para el usuario." },
+              { title: "Limpiar", text: "Se eliminan las variables heredadas que anulan la identidad: ANTHROPIC_*, CLAUDE_CODE_OAUTH_*, CLAUDE_CODE_USE_*, CLAUDE_CONFIG_DIR, CODEX_HOME, CODEX_API_KEY, CODEX_ACCESS_TOKEN, GROK_HOME, XAI_API_KEY, OPENAI_API_KEY, OPENAI_BASE_URL." },
+              { title: "Resolver la clave", text: "En una cuenta con clave de API, la clave se lee del llavero del SO en ese momento y se pasa solo por el entorno." },
+              { title: "Lanzar", text: "El harness arranca con la variable home de la cuenta, los argumentos de modelo y las entradas del kit enlazadas en el perfil." },
+            ],
+          },
+          { kind: "p", text: "Por harness, una clave de API llega como ANTHROPIC_API_KEY, o ANTHROPIC_AUTH_TOKEN con --bearer, para Claude; como VVAULT_API_KEY leída por un provider definido con flags -c para Codex; y como XAI_API_KEY para Grok. Codex necesita un endpoint que hable la Responses API." },
+        ],
+      },
+      {
+        id: "ledger",
+        title: "Libro mayor y store",
+        group: "deep",
+        blocks: [
+          {
+            kind: "p",
+            text: "store::Store abre VVAULT_HOME o el directorio de datos de la plataforma (project dirs sh/versatile/vvault). La raíz se crea con modo 0700 y ledger.json se escribe con 0600.",
+          },
+          {
+            kind: "list",
+            items: [
+              "Store::update toma un lock exclusivo sobre .lock, carga el libro mayor, aplica tu closure, valida cada cuenta y provider, y escribe mediante write_json.",
+              "write_json escribe un archivo temporal privado en el mismo directorio, llama a sync_all y lo renombra sobre ledger.json, así que un crash nunca deja un libro mayor a medio escribir.",
+              "Campos de una cuenta: id (UUID), label (1 a 80 caracteres, sin caracteres de control), harness, auth, model, fast_model, home, native_home, env, args, kit.",
+              "El home de una cuenta gestionada es profiles/<id>. Las cuentas native_home usan la carpeta propia del harness, como hace adopt, y nunca se copian.",
+              "Las cachés viven en archivos por id como limits/<id>.json; el id debe interpretarse como UUID, lo que bloquea trucos de rutas.",
+              "Los labels son únicos sin distinguir mayúsculas, y se comprueba de nuevo dentro del update con lock.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "limits",
+        title: "Límites y keep-alive",
+        group: "deep",
+        blocks: [
+          { kind: "scene", id: "agents-vault/limits", caption: "Las lecturas de uso llenan un libro mayor con medidores de sesión y semanales por cuenta, mantenidos al día por un reloj de keep-alive." },
+          {
+            kind: "table",
+            head: ["Cuenta", "Fuente", "Frescura"],
+            rows: [
+              ["Inicio de sesión de Claude Code", "endpoints de cuenta de Anthropic, más los rate_limits que Claude Code envía a su status line", "tras iniciar sesión, luego como máximo una vez por minuto"],
+              ["Inicio de sesión de Codex", "las peticiones account/read y account/rateLimits/read de la CLI de Codex", "tras iniciar sesión, luego como máximo una vez por minuto"],
+              ["Inicio de sesión de Grok", "solo estado de sesión", "ninguna"],
+              ["Claves de OpenRouter, DeepSeek", "la petición de clave o saldo del provider", "como máximo cada dos minutos"],
+            ],
+          },
+          {
+            kind: "list",
+            items: [
+              "Los límites tienen una Window de sesión y una semanal (percent 0 a 100, resets_at). settled pone a cero cualquier ventana cuya hora de reinicio ya pasó.",
+              "La status line se inyecta con --settings en el lanzamiento, así que tu settings.json no se modifica. Una status line existente sigue ejecutándose.",
+              "status.rs cachea el estado de login y lo vuelve a comprobar a los 50 minutos; keepalive renueva las cuentas inactivas pidiendo a cada harness su propio estado.",
+              "En macOS, Claude Code guarda su sesión en el Keychain, así que allí los límites de Claude vienen solo de la status line.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "safety",
+        title: "Modelo de seguridad",
+        group: "deep",
+        blocks: [
+          { kind: "scene", id: "agents-vault/safety", caption: "Un casillero por cuenta, sin copias, las claves se quedan en el llavero y el http plano se rechaza." },
+          {
+            kind: "table",
+            head: ["Regla", "Significado"],
+            rows: [
+              ["Un home por cuenta", "las credenciales nunca se copian entre carpetas"],
+              ["El harness es dueño de sus tokens", "el inicio de sesión, la renovación y el cierre los hace el harness"],
+              ["Claves en el llavero del SO", "macOS Keychain, Windows Credential Manager o Secret Service, bajo el servicio vvault; nunca en el libro mayor, un archivo de configuración ni una línea de comandos"],
+              ["Claves resueltas al final", "se leen dentro de vvault run y se pasan por entorno"],
+              ["Texto claro rechazado", "un endpoint personalizado debe ser https://, http:// plano solo para localhost, 127.0.0.1 o [::1]"],
+              ["Sin reutilizar claves", "se rechaza un valor env extra que repita la clave de API"],
+            ],
+          },
+          { kind: "callout", tone: "warn", text: "Una excepción de solo lectura: para mostrar los límites de Claude y el nombre del plan, el access token que guardó Claude Code se lee en memoria y se envía solo a los endpoints de cuenta de Anthropic (api.anthropic.com/api/oauth/usage y /profile). No están documentados; si cambian, los límites recurren a la status line." },
+        ],
+      },
+      {
+        id: "decisions",
+        title: "Decisiones y límites",
+        group: "decisions",
+        blocks: [
+          {
+            kind: "table",
+            head: ["Decisión", "Elegido", "Descartado", "Por qué"],
+            rows: [
+              ["Manejo de tokens", "nunca tocar los tokens OAuth", "copiarlos o renovarlos", "un refresh token que rota debe vivir en un solo lugar"],
+              ["Aislamiento", "una carpeta home por cuenta mediante CLAUDE_CONFIG_DIR, CODEX_HOME, GROK_HOME", "cambiar credenciales dentro de una carpeta", "sin copias, una sola sesión"],
+              ["Cuenta por defecto de la máquina", "apuntar el harness al home de la cuenta", "copiar la cuenta al home por defecto", "no se copia nada; solo cuentas de login, ya que una clave quedaría en cada shell"],
+              ["Entrega de claves", "lectura del llavero en el lanzamiento, solo por entorno", "guardar claves en el libro mayor o en flags", "las claves quedan fuera de archivos y líneas de comandos"],
+              ["Escrituras del libro mayor", "con lock, validadas, renombrado atómico", "sobrescritura simple", "ningún libro mayor a medias ni inválido"],
+              ["UI", "HTML, CSS, JS simples", "un build de frontend", "sin paso de build para la app de bandeja"],
+            ],
+          },
+          {
+            kind: "list",
+            items: [
+              "Los límites de Grok no se informan: la CLI de Grok solo expone el estado de sesión.",
+              "Las cuentas de Grok usan el endpoint de xAI; un endpoint personalizado se rechaza.",
+              "Los endpoints de uso y perfil de Anthropic no están documentados y pueden cambiar.",
+              "Las terminales ya abiertas conservan su cuenta hasta que ejecutes eval \"$(vvault env)\" o las reabras.",
+              "No se publican números de rendimiento medidos para este proyecto.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "files",
+        title: "Archivos para leer",
+        group: "reference",
+        blocks: [
+          {
+            kind: "files",
+            items: [
+              { path: "README.md", note: "instalación, uso, configuración, estructura" },
+              { path: "docs/usage.md", note: "valores por defecto, providers, kit, límites, modelos, keep-alive" },
+              { path: "docs/safety.md", note: "las reglas de seguridad completas" },
+              { path: "crates/core/src/model.rs", note: "Harness, Auth, Account y validación" },
+              { path: "crates/core/src/store.rs", note: "raíz del libro mayor, locking, escrituras atómicas" },
+              { path: "crates/core/src/launch.rs", note: "limpieza del entorno y plan de lanzamiento por harness" },
+              { path: "crates/core/src/secrets.rs", note: "acceso al llavero" },
+              { path: "crates/core/src/limits.rs", note: "ventanas de límites y throttling de sondeos" },
+              { path: "crates/core/src/status.rs", note: "estado de sesión y keep-alive" },
+              { path: "crates/core/src/machine.rs", note: "cuenta por defecto de toda la máquina" },
+              { path: "crates/cli/src/main.rs", note: "la superficie del comando vvault" },
+              { path: "app/src-tauri/src/main.rs", note: "comandos de la app de bandeja" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  "pt-br": {
+    tagline: "Um único livro-razão para cada conta, chave e router do Claude Code, Codex e Grok, cada um aberto já logado na sua própria pasta home.",
+    status: "código disponível (GPL-3.0-or-later)",
+    facts: [
+      { label: "Linguagem", value: "Rust 1.89+" },
+      { label: "Licença", value: "GPL-3.0-or-later" },
+      { label: "Binários", value: "vvault, vvault-app (bandeja Tauri)" },
+      { label: "Plataformas", value: "Linux, macOS, Windows" },
+    ],
+    sections: [
+      {
+        id: "overview",
+        title: "Visão geral",
+        group: "start",
+        blocks: [
+          { kind: "p", text: "O agents-vault mantém um livro-razão de cada conta, chave de API e router do Claude Code, Codex e Grok que você usa. Escolha uma conta e um terminal abre já logado, no modelo certo, com suas instruções compartilhadas no lugar. Um ícone na bandeja mostra os limites de 5 horas e semanais de cada conta." },
+          { kind: "p", text: "O problema que ele elimina é o compartilhamento de credenciais entre contas. Cada conta tem sua própria pasta home, então um refresh token que rotaciona existe em um só lugar. Ele nunca guarda, copia nem renova um token OAuth: login, renovação e logout ficam com o claude, o codex e o grok." },
+          { kind: "p", text: "Roda na sua máquina como um workspace Rust: uma biblioteca core, o comando vvault e um app de bandeja Tauri. Não é afiliado à Anthropic, OpenAI nem xAI." },
+          {
+            kind: "table",
+            head: ["Crate ou caminho", "Papel"],
+            rows: [
+              ["crates/core", "livro-razão, launcher, keychain, limites, keep-alive"],
+              ["crates/cli", "o comando vvault"],
+              ["app/src-tauri", "backend do app de bandeja"],
+              ["app/ui", "interface da bandeja em HTML, CSS e JS puros, sem etapa de build"],
+            ],
+          },
+        ],
+      },
+      {
+        id: "bootstrap",
+        title: "Instalar e rodar",
+        group: "start",
+        blocks: [
+          { kind: "p", text: "Pré-requisitos: Rust 1.89 ou superior e, para o app de bandeja, as dependências de sistema do Tauri 2." },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "git clone https://github.com/versatile-sh/agents-vault\ncd agents-vault\ncargo install --path crates/cli\ncargo build --release -p vvault-app --features custom-protocol",
+            caption: "coloque o vvault-app ao lado do vvault, ou deixe o vvault no PATH; os instaladores vêm de cargo tauri build em app/src-tauri",
+          },
+          { kind: "p", text: "Com um livro-razão novo, vvault list responde: No accounts yet. Try `vvault add work` or `vvault adopt personal`." },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "vvault add work                       # official Claude Code sign-in\nvvault add team --harness codex       # official Codex sign-in\nvvault add x --harness grok           # official Grok sign-in\nvvault adopt personal                 # track your existing ~/.claude in place\nvvault list\nvvault open work                      # new terminal window on that account\nvvault run work -- --resume           # same, in the current terminal\nvvault default work                   # plain `claude` now means the work account",
+          },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "vvault add router --base-url https://openrouter.ai/api --bearer --model vendor/model\nvvault provider add OpenRouter --preset openrouter --model vendor/model-a\nvvault use OpenRouter --with codex --model vendor/model-b\nvvault kit claude --dir ~/.claude\nvvault keepalive                      # exit code 1 when an account needs a new sign-in\nvvault waybar                         # JSON for a status bar",
+          },
+          {
+            kind: "table",
+            head: ["Variável", "Padrão", "Efeito"],
+            rows: [["VVAULT_HOME", "a pasta de dados da plataforma", "move o livro-razão, para manter experimentos longe das contas reais"]],
+          },
+          {
+            kind: "code",
+            lang: "sh",
+            code: "mise run check            # rustfmt, clippy, tests, Semgrep\nmise run test             # cargo test --workspace\nmise run dev -- list      # the CLI against a throwaway ledger in /tmp/vvault-dev",
+          },
+        ],
+      },
+      {
+        id: "architecture",
+        title: "Arquitetura",
+        group: "how",
+        blocks: [
+          { kind: "scene", id: "agents-vault/architecture", caption: "A bandeja e a CLI compartilham um store, que guarda um armário privado por conta e inicia cada harness a partir do seu." },
+          { kind: "p", text: "crates/core guarda todo o comportamento. A CLI e o backend do Tauri são front ends finos sobre o mesmo Store e as mesmas funções, então o app de bandeja e o vvault sempre concordam." },
+          {
+            kind: "code",
+            lang: "text",
+            code: "tray app / vvault CLI\n        |\n        v\n   store::Store  --- ledger.json (labels, models, paths; 0600)\n        |             profiles/<id>/   (one harness home per account)\n        |             limits/ status/ balance/ caches\n        v\n   launch::plan  --- secrets (OS keychain, read last)\n        |\n        v\n   claude | codex | grok   with CLAUDE_CONFIG_DIR / CODEX_HOME / GROK_HOME",
+          },
+          {
+            kind: "list",
+            items: [
+              "model.rs: Harness (Claude, Codex, Grok), Auth (Login ou ApiKey), Account, Config, Provider.",
+              "launch.rs: monta o Launch (programa, args, env) e limpa o ambiente herdado.",
+              "limits.rs, status.rs, balance.rs, claude.rs, codex.rs: leem limites, estado de sessão e saldos por harness.",
+              "kit.rs: liga instruções compartilhadas aos perfis. machine.rs: a conta padrão da máquina inteira.",
+              "terminal.rs: abre uma janela de terminal que reentra por vvault run.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "open-flow",
+        title: "Abrindo uma conta",
+        group: "how",
+        blocks: [
+          { kind: "scene", id: "agents-vault/open-flow", caption: "As variáveis de identidade são descartadas numa comporta e a chave sai do keychain só no lançamento." },
+          {
+            kind: "steps",
+            items: [
+              { title: "Escolher", text: "Você escolhe uma conta no app de bandeja ou roda vvault open. O terminal executa vvault run <id>, então a chave é resolvida dentro desse processo." },
+              { title: "Validar", text: "launch::plan chama Account::validate, e então ensure_home cria o diretório do perfil, privado para o usuário." },
+              { title: "Limpar", text: "As variáveis herdadas que sobrescrevem a identidade são removidas: ANTHROPIC_*, CLAUDE_CODE_OAUTH_*, CLAUDE_CODE_USE_*, CLAUDE_CONFIG_DIR, CODEX_HOME, CODEX_API_KEY, CODEX_ACCESS_TOKEN, GROK_HOME, XAI_API_KEY, OPENAI_API_KEY, OPENAI_BASE_URL." },
+              { title: "Resolver a chave", text: "Numa conta com chave de API, a chave é lida do keychain do SO naquele momento e passada apenas pelo ambiente." },
+              { title: "Lançar", text: "O harness inicia com a variável home da conta, os argumentos de modelo e as entradas do kit ligadas ao perfil." },
+            ],
+          },
+          { kind: "p", text: "Por harness, uma chave de API chega como ANTHROPIC_API_KEY, ou ANTHROPIC_AUTH_TOKEN com --bearer, para o Claude; como VVAULT_API_KEY lida por um provider definido com flags -c para o Codex; e como XAI_API_KEY para o Grok. O Codex precisa de um endpoint que fale a Responses API." },
+        ],
+      },
+      {
+        id: "ledger",
+        title: "Livro-razão e store",
+        group: "deep",
+        blocks: [
+          {
+            kind: "p",
+            text: "store::Store abre VVAULT_HOME ou o diretório de dados da plataforma (project dirs sh/versatile/vvault). A raiz é criada com modo 0700 e ledger.json é escrito com 0600.",
+          },
+          {
+            kind: "list",
+            items: [
+              "Store::update pega um lock exclusivo em .lock, carrega o livro-razão, aplica sua closure, valida cada conta e provider, e então escreve por write_json.",
+              "write_json escreve um arquivo temporário privado no mesmo diretório, chama sync_all e o renomeia sobre ledger.json, então um crash nunca deixa um livro-razão pela metade.",
+              "Campos de uma conta: id (UUID), label (1 a 80 caracteres, sem caracteres de controle), harness, auth, model, fast_model, home, native_home, env, args, kit.",
+              "O home de uma conta gerenciada é profiles/<id>. Contas native_home usam a pasta do próprio harness, como o adopt faz, e nunca são copiadas.",
+              "Os caches ficam em arquivos por id como limits/<id>.json; o id precisa ser um UUID válido, o que bloqueia truques de caminho.",
+              "Os labels são únicos sem diferenciar maiúsculas, verificado de novo dentro do update com lock.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "limits",
+        title: "Limites e keep-alive",
+        group: "deep",
+        blocks: [
+          { kind: "scene", id: "agents-vault/limits", caption: "As leituras de uso preenchem um livro-razão com medidores de sessão e semanais por conta, mantidos em dia por um relógio de keep-alive." },
+          {
+            kind: "table",
+            head: ["Conta", "Fonte", "Atualidade"],
+            rows: [
+              ["Login do Claude Code", "endpoints de conta da Anthropic, mais os rate_limits que o Claude Code envia à sua status line", "após o login, depois no máximo uma vez por minuto"],
+              ["Login do Codex", "as requisições account/read e account/rateLimits/read da CLI do Codex", "após o login, depois no máximo uma vez por minuto"],
+              ["Login do Grok", "só o estado da sessão", "nenhuma"],
+              ["Chaves OpenRouter, DeepSeek", "a requisição de chave ou saldo do provider", "no máximo a cada dois minutos"],
+            ],
+          },
+          {
+            kind: "list",
+            items: [
+              "Os limites têm uma Window de sessão e uma semanal (percent 0 a 100, resets_at). settled zera qualquer janela cujo horário de reset já passou.",
+              "A status line é injetada com --settings no lançamento, então seu settings.json não é modificado. Uma status line existente continua rodando.",
+              "status.rs faz cache do estado de login e rechecagem após 50 minutos; keepalive renova contas ociosas pedindo a cada harness o próprio status.",
+              "No macOS o Claude Code guarda o login no Keychain, então lá os limites do Claude vêm só da status line.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "safety",
+        title: "Modelo de segurança",
+        group: "deep",
+        blocks: [
+          { kind: "scene", id: "agents-vault/safety", caption: "Um armário por conta, sem cópias, as chaves ficam no keychain e http puro é recusado." },
+          {
+            kind: "table",
+            head: ["Regra", "Significado"],
+            rows: [
+              ["Um home por conta", "credenciais nunca são copiadas entre pastas"],
+              ["O harness é dono dos seus tokens", "login, renovação e logout são feitos pelo harness"],
+              ["Chaves no keychain do SO", "macOS Keychain, Windows Credential Manager ou Secret Service, sob o serviço vvault; nunca no livro-razão, num arquivo de configuração ou numa linha de comando"],
+              ["Chaves resolvidas no fim", "lidas dentro de vvault run e passadas por ambiente"],
+              ["Texto puro recusado", "um endpoint customizado precisa ser https://, http:// puro só para localhost, 127.0.0.1 ou [::1]"],
+              ["Sem reuso de chave", "um valor env extra que repita a chave de API é recusado"],
+            ],
+          },
+          { kind: "callout", tone: "warn", text: "Uma exceção somente de leitura: para mostrar os limites do Claude e o nome do plano, o access token que o Claude Code salvou é lido em memória e enviado apenas aos endpoints de conta da Anthropic (api.anthropic.com/api/oauth/usage e /profile). Eles não são documentados; se mudarem, os limites recorrem à status line." },
+        ],
+      },
+      {
+        id: "decisions",
+        title: "Decisões e limites",
+        group: "decisions",
+        blocks: [
+          {
+            kind: "table",
+            head: ["Decisão", "Escolhido", "Rejeitado", "Por quê"],
+            rows: [
+              ["Tratamento de tokens", "nunca tocar nos tokens OAuth", "copiá-los ou renová-los", "um refresh token que rotaciona deve viver em um só lugar"],
+              ["Isolamento", "uma pasta home por conta via CLAUDE_CONFIG_DIR, CODEX_HOME, GROK_HOME", "trocar credenciais dentro de uma pasta", "sem cópias, uma sessão"],
+              ["Padrão da máquina", "apontar o harness para o home da conta", "copiar a conta para o home padrão", "nada é copiado; só contas de login, já que uma chave ficaria em todo shell"],
+              ["Entrega de chaves", "leitura do keychain no lançamento, só por ambiente", "guardar chaves no livro-razão ou em flags", "as chaves ficam fora de arquivos e linhas de comando"],
+              ["Escritas do livro-razão", "com lock, validadas, rename atômico", "sobrescrita simples", "nenhum livro-razão pela metade ou inválido"],
+              ["UI", "HTML, CSS, JS puros", "um build de frontend", "sem etapa de build para o app de bandeja"],
+            ],
+          },
+          {
+            kind: "list",
+            items: [
+              "Os limites do Grok não são informados: a CLI do Grok só expõe o estado da sessão.",
+              "As contas do Grok usam o endpoint da xAI; um endpoint customizado é recusado.",
+              "Os endpoints de uso e perfil da Anthropic não são documentados e podem mudar.",
+              "Terminais já abertos mantêm sua conta até você rodar eval \"$(vvault env)\" ou reabri-los.",
+              "Nenhum número de desempenho medido é publicado para este projeto.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "files",
+        title: "Arquivos para ler",
+        group: "reference",
+        blocks: [
+          {
+            kind: "files",
+            items: [
+              { path: "README.md", note: "instalação, uso, configuração, estrutura" },
+              { path: "docs/usage.md", note: "padrões, providers, kit, limites, modelos, keep-alive" },
+              { path: "docs/safety.md", note: "as regras de segurança completas" },
+              { path: "crates/core/src/model.rs", note: "Harness, Auth, Account e validação" },
+              { path: "crates/core/src/store.rs", note: "raiz do livro-razão, locking, escritas atômicas" },
+              { path: "crates/core/src/launch.rs", note: "limpeza do ambiente e plano de lançamento por harness" },
+              { path: "crates/core/src/secrets.rs", note: "acesso ao keychain" },
+              { path: "crates/core/src/limits.rs", note: "janelas de limite e throttling de sondagens" },
+              { path: "crates/core/src/status.rs", note: "estado da sessão e keep-alive" },
+              { path: "crates/core/src/machine.rs", note: "conta padrão da máquina inteira" },
+              { path: "crates/cli/src/main.rs", note: "a superfície do comando vvault" },
+              { path: "app/src-tauri/src/main.rs", note: "comandos do app de bandeja" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export default doc;
