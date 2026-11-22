@@ -4,6 +4,7 @@ import { langFromPath } from "./content/copy";
 import { CollisionProbe } from "./components/dev/CollisionProbe";
 import { SmoothScroll } from "./components/layout/SmoothScroll";
 import "lenis/dist/lenis.css";
+import monoLatin from "@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url";
 import "./app.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0e1116" />
+        <link rel="preload" as="font" type="font/woff2" href={monoLatin} crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
