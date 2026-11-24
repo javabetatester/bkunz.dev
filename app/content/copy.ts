@@ -104,7 +104,7 @@ const en: Copy = {
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
     focus: "DX and performance: less friction for whoever builds, less latency for whoever uses.",
-    about: "Software engineer since 2016. I started in game networks and anti-cheat, moved through payments, and today I do AI engineering: agents, evals and the harness that lets a team ship with them. Go first, on a long Java background.",
+    about: "Building Versatile. Creator of vxc, vxlint and bench-engine. I build high-performance Go developer tooling and AI engineering infrastructure, with statistical proof behind every speed claim. In backend, distributed systems and security since 2016.",
     track: "Track",
     handleNote: "code and history on GitHub",
     trackCta: "full history",
@@ -186,7 +186,7 @@ const es: Copy = {
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
     focus: "DX y performance: menos fricción para quien construye, menos latencia para quien usa.",
-    about: "Ingeniero de software desde 2016. Empecé en redes de juegos y anti-cheat, pasé por pagos y hoy hago AI engineering: agentes, evals y el harness que permite a un equipo entregar con ellos. Go primero, sobre una larga base en Java.",
+    about: "Construyendo Versatile. Creador de vxc, vxlint y bench-engine. Hago developer tooling de alto rendimiento en Go e infraestructura de AI engineering, con prueba estadística detrás de cada número de velocidad. Desde 2016 en backend, sistemas distribuidos y seguridad.",
     track: "Trayectoria",
     handleNote: "código e historia en GitHub",
     trackCta: "historia completa",
@@ -268,7 +268,7 @@ const ptBr: Copy = {
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
     focus: "DX e performance: menos atrito pra quem constrói, menos latência pra quem usa.",
-    about: "Engenheiro de software desde 2016. Comecei em redes de jogos e anti-cheat, passei por pagamentos e hoje faço AI engineering: agentes, evals e o harness que deixa um time entregar com eles. Go primeiro, sobre uma longa base em Java.",
+    about: "Construindo a Versatile. Criador do vxc, vxlint e bench-engine. Faço developer tooling de alta performance em Go e infraestrutura de AI engineering, com prova estatística por trás de cada número de velocidade. Desde 2016 em backend, sistemas distribuídos e segurança.",
     track: "Trajetória",
     handleNote: "código e histórico no GitHub",
     trackCta: "histórico completo",
