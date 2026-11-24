@@ -104,7 +104,7 @@ const en: Copy = {
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
     focus: "DX and performance: less friction for whoever builds, less latency for whoever uses.",
-    about: "Building Versatile. Creator of vxc, vxlint and bench-engine. I build high-performance Go developer tooling and AI engineering infrastructure, with statistical proof behind every speed claim. In backend, distributed systems and security since 2016.",
+    about: "Senior Software Engineer working on backend, distributed systems and security since 2016. Experience with large-scale gaming platforms (40k+ concurrent players, p99 < 50 ms), mission-critical financial systems on Kafka, and AI engineering tooling (agent orchestration, LLM-as-judge evals, guardrails). Focused on high performance, low latency and developer productivity, with Go as my main stack and a strong Java background.",
     track: "Track",
     handleNote: "code and history on GitHub",
     trackCta: "full history",
@@ -186,7 +186,7 @@ const es: Copy = {
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
     focus: "DX y performance: menos fricción para quien construye, menos latencia para quien usa.",
-    about: "Construyendo Versatile. Creador de vxc, vxlint y bench-engine. Hago developer tooling de alto rendimiento en Go e infraestructura de AI engineering, con prueba estadística detrás de cada número de velocidad. Desde 2016 en backend, sistemas distribuidos y seguridad.",
+    about: "Senior Software Engineer trabajando en backend, sistemas distribuidos y seguridad desde 2016. Experiencia con plataformas de juegos a gran escala (40k+ jugadores concurrentes, p99 < 50 ms), sistemas financieros de misión crítica sobre Kafka y tooling de AI engineering (orquestación de agentes, evals con LLM-as-judge, guardrails). Enfocado en alto rendimiento, baja latencia y productividad de desarrolladores, con Go como stack principal y un fuerte background en Java.",
     track: "Trayectoria",
     handleNote: "código e historia en GitHub",
     trackCta: "historia completa",
@@ -268,7 +268,7 @@ const ptBr: Copy = {
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
     focus: "DX e performance: menos atrito pra quem constrói, menos latência pra quem usa.",
-    about: "Construindo a Versatile. Criador do vxc, vxlint e bench-engine. Faço developer tooling de alta performance em Go e infraestrutura de AI engineering, com prova estatística por trás de cada número de velocidade. Desde 2016 em backend, sistemas distribuídos e segurança.",
+    about: "Senior Software Engineer trabalhando com backend, sistemas distribuídos e segurança desde 2016. Experiência com plataformas de jogos em larga escala (40k+ jogadores simultâneos, p99 < 50 ms), sistemas financeiros de missão crítica em Kafka e tooling de AI engineering (orquestração de agentes, evals com LLM-as-judge, guardrails). Foco em alta performance, baixa latência e produtividade de desenvolvedores, com Go como stack principal e forte background em Java.",
     track: "Trajetória",
     handleNote: "código e histórico no GitHub",
     trackCta: "histórico completo",
