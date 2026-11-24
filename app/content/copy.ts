@@ -103,8 +103,8 @@ const en: Copy = {
   },
   hero: {
     roles: ["AI Engineering", "Developer Experience", "Backend"],
-    focus: "Developer experience and performance.",
-    about: "I'm Bernardo, a software engineer since 2016. Today I work on AI engineering: agents, evals and the harness that lets a team ship with them. Before that, backend for game networks and payments. Go first, on a long Java background.",
+    focus: "DX and performance: less friction for whoever builds, less latency for whoever uses.",
+    about: "Software engineer since 2016. I started in game networks and anti-cheat, moved through payments, and today I do AI engineering: agents, evals and the harness that lets a team ship with them. Go first, on a long Java background.",
     track: "Track",
     handleNote: "code and history on GitHub",
     trackCta: "full history",
@@ -181,12 +181,12 @@ const es: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Bernardo Kunz: ingeniero de IA, developer experience y backend, fundador de versatile.sh. Agentes, evals, herramientas de ingeniería y performance, con docs técnicas y estudios.",
+      "Bernardo Kunz: AI engineering, developer experience y backend. Fundador de versatile.sh. Agentes, evals, herramientas de ingeniería y performance, con docs técnicas y estudios.",
   },
   hero: {
-    roles: ["Ingeniería de IA", "Developer Experience", "Backend"],
-    focus: "Developer experience y performance.",
-    about: "Soy Bernardo, ingeniero de software desde 2016. Hoy trabajo en ingeniería de IA: agentes, evals y el harness que permite a un equipo entregar con ellos. Antes, backend en redes de juegos y pagos. Go primero, sobre una larga base en Java.",
+    roles: ["AI Engineering", "Developer Experience", "Backend"],
+    focus: "DX y performance: menos fricción para quien construye, menos latencia para quien usa.",
+    about: "Ingeniero de software desde 2016. Empecé en redes de juegos y anti-cheat, pasé por pagos y hoy hago AI engineering: agentes, evals y el harness que permite a un equipo entregar con ellos. Go primero, sobre una larga base en Java.",
     track: "Trayectoria",
     handleNote: "código e historia en GitHub",
     trackCta: "historia completa",
@@ -263,12 +263,12 @@ const ptBr: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Bernardo Kunz: engenheiro de IA, developer experience e backend, fundador da versatile.sh. Agentes, evals, ferramentas de engenharia e performance, com docs técnicas e estudos.",
+      "Bernardo Kunz: AI engineering, developer experience e backend. Fundador da versatile.sh. Agentes, evals, ferramentas de engenharia e performance, com docs técnicas e estudos.",
   },
   hero: {
-    roles: ["Engenharia de IA", "Developer Experience", "Backend"],
-    focus: "Developer experience e performance.",
-    about: "Sou o Bernardo, engenheiro de software desde 2016. Hoje trabalho com engenharia de IA: agentes, evals e o harness que deixa um time entregar com eles. Antes disso, backend em redes de jogos e pagamentos. Go primeiro, sobre uma longa base em Java.",
+    roles: ["AI Engineering", "Developer Experience", "Backend"],
+    focus: "DX e performance: menos atrito pra quem constrói, menos latência pra quem usa.",
+    about: "Engenheiro de software desde 2016. Comecei em redes de jogos e anti-cheat, passei por pagamentos e hoje faço AI engineering: agentes, evals e o harness que deixa um time entregar com eles. Go primeiro, sobre uma longa base em Java.",
     track: "Trajetória",
     handleNote: "código e histórico no GitHub",
     trackCta: "histórico completo",
