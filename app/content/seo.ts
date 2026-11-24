@@ -1,4 +1,4 @@
-import { LANGS, type Lang } from "./copy";
+import { DEFAULT_LANG, LANGS, type Lang } from "./copy";
 
 export const ORIGIN = "https://bkunz.dev";
 const PERSON_ID = `${ORIGIN}/#person`;
@@ -13,10 +13,12 @@ export const person = {
   alternateName: ["bk", "javabetatester", "jxstbk"],
   url: `${ORIGIN}/`,
   image: `${ORIGIN}/avatar.webp`,
-  jobTitle: "Senior Software Engineer, Backend & AI Engineering",
+  jobTitle: "Senior Software Engineer, AI Engineering, Developer Experience & Backend",
   description:
-    "Backend, distributed systems and AI engineer since 2016. Founder of versatile.sh, an open-source project of independent engines: durable execution, agent runtimes, MCP tool gateways and edge execution.",
+    "AI, developer experience and backend engineer since 2016. Founder of versatile.sh, an open-source project of independent engines: durable execution, agent runtimes, MCP tool gateways and edge execution.",
   knowsAbout: [
+    "Developer experience",
+    "Performance engineering",
     "Distributed systems",
     "Durable execution",
     "Transactional outbox",
@@ -69,7 +71,7 @@ type MetaInput = {
 /** Title, description, canonical, hreflang, Open Graph, Twitter and one JSON-LD graph for a page. */
 export function pageMeta({ lang, pathFor, title, description, type = "website", extra = [], crumbs, published }: MetaInput) {
   const url = `${ORIGIN}${pathFor(lang)}`;
-  const path = pathFor(lang).replace(/^\/(es|pt-br)(?=\/|$)/, "").replace(/^\/$/, "");
+  const path = pathFor(lang).replace(/^\/(en|es)(?=\/|$)/, "").replace(/^\/$/, "");
   const tabTitle = `> ~/bkunz.dev${path}`;
   const graph: Record<string, unknown>[] = [person, organization, website, ...extra];
   if (crumbs?.length) {
@@ -97,7 +99,7 @@ export function pageMeta({ lang, pathFor, title, description, type = "website", 
     { name: "twitter:description", content: description },
     { tagName: "link", rel: "canonical", href: url },
     ...LANGS.map((l) => ({ tagName: "link", rel: "alternate", hrefLang: hreflang(l), href: `${ORIGIN}${pathFor(l)}` })),
-    { tagName: "link", rel: "alternate", hrefLang: "x-default", href: `${ORIGIN}${pathFor("en")}` },
+    { tagName: "link", rel: "alternate", hrefLang: "x-default", href: `${ORIGIN}${pathFor(DEFAULT_LANG)}` },
     { "script:ld+json": { "@context": "https://schema.org", "@graph": graph } },
   ];
 }

@@ -5,9 +5,9 @@ import { join } from "node:path";
 const OUT = "build/client";
 const ORIGIN = "https://bkunz.dev";
 const LANGS = [
-  { code: "en", prefix: "", hreflang: "en" },
+  { code: "pt-br", prefix: "", hreflang: "pt-BR" },
+  { code: "en", prefix: "/en", hreflang: "en" },
   { code: "es", prefix: "/es", hreflang: "es" },
-  { code: "pt-br", prefix: "/pt-br", hreflang: "pt-BR" },
 ];
 const today = new Date().toISOString().slice(0, 10);
 
@@ -47,7 +47,7 @@ for (const [rest, variants] of groups) {
       const alt = variants.get(l.code);
       if (alt) xml += `    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${ORIGIN}${alt}"/>\n`;
     }
-    xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}${variants.get("en") ?? route}"/>\n  </url>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}${variants.get("pt-br") ?? route}"/>\n  </url>\n`;
   }
 }
 xml += "</urlset>\n";
@@ -62,9 +62,9 @@ const section = (label, test) => [`## ${label}`, "", ...en.filter(([rest]) => te
 const llms = [
   "# bkunz.dev",
   "",
-  "> Personal site of Bernardo Kunz, a backend, distributed systems and AI engineer since 2016 and the founder of versatile.sh (https://versatile.sh), an open-source project of independent engines: durable execution, agent runtimes, MCP tool gateways and edge execution.",
+  "> Personal site of Bernardo Kunz, an AI, developer experience and backend engineer since 2016 and the founder of versatile.sh (https://versatile.sh), an open-source project of independent engines: durable execution, agent runtimes, MCP tool gateways and edge execution.",
   "",
-  "Profiles: https://www.linkedin.com/in/bernardokunz/ · https://github.com/javabetatester · https://x.com/jxstbk · Languages: en (/), es (/es), pt-br (/pt-br).",
+  "Profiles: https://www.linkedin.com/in/bernardokunz/ · https://github.com/javabetatester · https://x.com/jxstbk · Languages: pt-br (/), en (/en), es (/es).",
   "",
   ...section("Pages", (r) => /^\/(work|projects|posts)?$/.test(r)),
   ...section("Projects", (r) => r.startsWith("/project/")),

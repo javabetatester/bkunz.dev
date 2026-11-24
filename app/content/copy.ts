@@ -1,7 +1,8 @@
-export const LANGS = ["en", "es", "pt-br"] as const;
+export const LANGS = ["pt-br", "en", "es"] as const;
 export type Lang = (typeof LANGS)[number];
 
-export const LANG_PATH: Record<Lang, string> = { en: "/", es: "/es", "pt-br": "/pt-br" };
+export const DEFAULT_LANG: Lang = "pt-br";
+export const LANG_PATH: Record<Lang, string> = { "pt-br": "/", en: "/en", es: "/es" };
 export const LANG_LABEL: Record<Lang, string> = { en: "en", es: "es", "pt-br": "pt" };
 
 export const TABS = ["whoami", "work", "projects", "posts"] as const;
@@ -18,7 +19,7 @@ export type Section = {
 
 export type Copy = {
   meta: { title: string; description: string };
-  hero: { role: string; answer: string; about: string; track: string; trackCta: string; handleNote: string; scrollHint: string };
+  hero: { roles: string[]; focus: string; about: string; track: string; trackCta: string; handleNote: string; scrollHint: string };
   tabs: Record<Tab, Card[]>;
   sections: Section[];
   elsewhere: { title: string; lead: string };
@@ -98,12 +99,12 @@ const en: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Bernardo Kunz: backend, distributed systems and AI engineer, founder of versatile.sh. Durable execution, agent runtimes, MCP gateways and LLM evals, with technical docs and studies.",
+      "Bernardo Kunz: AI, developer experience and backend engineer, founder of versatile.sh. Agents, evals, engineering tooling and performance, with technical docs and studies.",
   },
   hero: {
-    role: "Backend & AI engineer: agent orchestration, evals and guardrails on top of distributed systems and security, since 2016.",
-    answer: "I build software as independent engines.",
-    about: "Since 2016 on backends that cannot stop: game networks with 40k+ concurrent players at p99 < 50 ms, payment systems on Kafka at millions of transactions a month, and applied AI with evals in CI. Go first, on a long Java background.",
+    roles: ["AI Engineering", "Developer Experience", "Backend"],
+    focus: "Developer experience and performance.",
+    about: "I'm Bernardo, a software engineer since 2016. Today I work on AI engineering: agents, evals and the harness that lets a team ship with them. Before that, backend for game networks and payments. Go first, on a long Java background.",
     track: "Track",
     handleNote: "code and history on GitHub",
     trackCta: "full history",
@@ -180,12 +181,12 @@ const es: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Bernardo Kunz: ingeniero de backend, sistemas distribuidos e IA, fundador de versatile.sh. Ejecución durable, runtimes de agentes, gateways MCP y evals de LLM, con docs técnicas y estudios.",
+      "Bernardo Kunz: ingeniero de IA, developer experience y backend, fundador de versatile.sh. Agentes, evals, herramientas de ingeniería y performance, con docs técnicas y estudios.",
   },
   hero: {
-    role: "Ingeniero de backend e IA: orquestación de agentes, evals y guardrails sobre sistemas distribuidos y seguridad, desde 2016.",
-    answer: "Construyo software como engines independientes.",
-    about: "Desde 2016 en backends que no pueden parar: redes de juego con más de 40k jugadores concurrentes a p99 < 50 ms, sistemas de pago sobre Kafka con millones de transacciones al mes e IA aplicada con evals en CI. Go primero, sobre una larga base en Java.",
+    roles: ["Ingeniería de IA", "Developer Experience", "Backend"],
+    focus: "Developer experience y performance.",
+    about: "Soy Bernardo, ingeniero de software desde 2016. Hoy trabajo en ingeniería de IA: agentes, evals y el harness que permite a un equipo entregar con ellos. Antes, backend en redes de juegos y pagos. Go primero, sobre una larga base en Java.",
     track: "Trayectoria",
     handleNote: "código e historia en GitHub",
     trackCta: "historia completa",
@@ -262,12 +263,12 @@ const ptBr: Copy = {
   meta: {
     title: "Bernardo Kunz · bkunz.dev",
     description:
-      "Bernardo Kunz: engenheiro de backend, sistemas distribuídos e IA, fundador da versatile.sh. Execução durável, runtimes de agentes, gateways MCP e evals de LLM, com docs técnicas e estudos.",
+      "Bernardo Kunz: engenheiro de IA, developer experience e backend, fundador da versatile.sh. Agentes, evals, ferramentas de engenharia e performance, com docs técnicas e estudos.",
   },
   hero: {
-    role: "Engenheiro de backend e IA: orquestração de agentes, evals e guardrails sobre sistemas distribuídos e segurança, desde 2016.",
-    answer: "Construo software como engines independentes.",
-    about: "Desde 2016 em backends que não podem parar: redes de jogos com mais de 40k jogadores simultâneos a p99 < 50 ms, sistemas de pagamento em Kafka com milhões de transações por mês e IA aplicada com evals no CI. Go primeiro, sobre uma longa base em Java.",
+    roles: ["Engenharia de IA", "Developer Experience", "Backend"],
+    focus: "Developer experience e performance.",
+    about: "Sou o Bernardo, engenheiro de software desde 2016. Hoje trabalho com engenharia de IA: agentes, evals e o harness que deixa um time entregar com eles. Antes disso, backend em redes de jogos e pagamentos. Go primeiro, sobre uma longa base em Java.",
     track: "Trajetória",
     handleNote: "código e histórico no GitHub",
     trackCta: "histórico completo",
@@ -350,4 +351,4 @@ export const LINKS = [
 ] as const;
 
 export const langFromPath = (pathname: string): Lang =>
-  LANGS.find((l) => l !== "en" && (pathname === `/${l}` || pathname.startsWith(`/${l}/`))) ?? "en";
+  LANGS.find((l) => l !== DEFAULT_LANG && (pathname === LANG_PATH[l] || pathname.startsWith(`${LANG_PATH[l]}/`))) ?? DEFAULT_LANG;

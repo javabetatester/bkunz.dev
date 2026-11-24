@@ -1,10 +1,13 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ComponentType } from "react";
 
-type Line = { cmd: string; out: string; tone: "fg" | "accent" | "muted" };
+type Icon = ComponentType<{ size?: number | string; stroke?: number; className?: string }>;
+type Chip = { label: string; Icon: Icon };
+type Line = { cmd: string; out: string; tone: "fg" | "accent" | "muted" } | { cmd: string; chips: Chip[] };
 
 const CMD_STEP = 45;
 const OUT_STEP = { fg: 11, accent: 16, muted: 7 } as const;
 const PAUSE = 260;
+const CHIP_STEP = 140;
 
 const TONE = { fg: "hs-lead text-fg", accent: "hs-lead text-accent", muted: "hs-body text-muted" } as const;
 
@@ -27,7 +30,7 @@ export function HeroTerminal({ lines, start = 700 }: { lines: Line[]; start?: nu
     const cmdAt = t;
     t += line.cmd.length * CMD_STEP + PAUSE;
     const outAt = t;
-    t += line.out.length * OUT_STEP[line.tone] + PAUSE;
+    t += ("chips" in line ? line.chips.length * CHIP_STEP : line.out.length * OUT_STEP[line.tone]) + PAUSE;
     return { ...line, cmdAt, outAt };
   });
   const caretAt = t;
@@ -47,9 +50,20 @@ export function HeroTerminal({ lines, start = 700 }: { lines: Line[]; start?: nu
               </span>
               <Typed text={row.cmd} from={row.cmdAt} step={CMD_STEP} />
             </p>
-            <p className={`max-w-[64ch] text-pretty ${TONE[row.tone]}`}>
-              <Typed text={row.out} from={row.outAt} step={OUT_STEP[row.tone]} out />
-            </p>
+            {"chips" in row ? (
+              <ul className="flex flex-wrap gap-[0.6em] pt-[0.2em]">
+                {row.chips.map(({ label, Icon }, i) => (
+                  <li key={label} className="type-glyph type-out hs-body inline-flex items-center gap-[0.6em] rounded-field border border-line-strong bg-raised px-[0.9em] py-[0.45em] text-fg" style={{ "--d": `${row.outAt + i * CHIP_STEP}ms` } as CSSProperties}>
+                    <Icon size="1.15em" stroke={1.6} className="text-accent" />
+                    {label}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={`max-w-[64ch] text-pretty ${TONE[row.tone]}`}>
+                <Typed text={row.out} from={row.outAt} step={OUT_STEP[row.tone]} out />
+              </p>
+            )}
           </div>
         ))}
         <p className="hs-body text-muted">
