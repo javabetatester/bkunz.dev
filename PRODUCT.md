@@ -20,11 +20,11 @@ The personal site of Bernardo Kunz (bk). It states his premises and ambition in 
 
 ## Positioning
 
-Low-level and distributed-systems engineering presented with the rigour of a spec: durable execution, agent runtimes, tool gateways, edge execution, security. Versatile (versatile.sh) is presented as the organisation he founded and builds.
+AI engineering, developer experience and backend, with performance as the focus, presented with the rigour of a spec: durable execution, agent runtimes, tool gateways, edge execution, security. Versatile (versatile.sh) is presented as the organisation he founded and builds.
 
 ## Capabilities and Constraints
 
-- Languages: en (default, at `/`), es (`/es`), pt-br (`/pt-br`).
+- Languages: pt-br (default, at `/`, never picked from the browser), en (`/en`), es (`/es`).
 - Landing sub-tabs: whoami, work, projects, posts. whoami is brief: premises only, no stack list.
 - Project write-ups live on a subdomain, `setup.bkunz.dev/{slug}`, following a docs-style schema (category tag, lede, invocation/usage, ordered steps, rules, outputs, files, prev/next, on-this-page).
 - Project selection (2026-11-21): `versatile-sh/connector-engine`, `versatile-sh/live-platform` (both open source by 2026-11-23), `javabetatester/hydra-ensemble` (needs a review pass), `versatile-sh/agents-vault`, `versatile-sh/go-lint`, the versatile.sh organisation and site as a case, and `javabetatester/omarchy-omakase` (renamed from archin-coding; rebuild in progress, docs-site model like setup.gtkatakura.com). Out for now: `burpcli`, `SubdomainRecon`, `JsRecon` (a later Go rebuild in their own repositories, real dates). Each gets an isometric visual chosen per case.

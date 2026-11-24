@@ -1,8 +1,8 @@
 # bkunz.dev
 
-The personal site of Bernardo Kunz: backend, distributed systems and AI engineering. A static, prerendered React site with a terminal look, technical write-ups of each project and a log of studies, discoveries and daily notes.
+The personal site of Bernardo Kunz: AI engineering, developer experience and backend. A static, prerendered React site with a terminal look, technical write-ups of each project and a log of studies, discoveries and daily notes.
 
-**Live:** [bkunz.dev](https://bkunz.dev) · **Languages:** English, Español, Português
+**Live:** [bkunz.dev](https://bkunz.dev) · **Languages:** Português (default), English, Español
 
 ## What is in it
 
@@ -14,7 +14,7 @@ The personal site of Bernardo Kunz: backend, distributed systems and AI engineer
 | `/project/:slug` | A technical doc per project: bootstrap, how it works, low level, decisions, files |
 | `/posts`, `/post/:slug` | Studies, discoveries and daily notes, each with the date of the work it describes |
 
-Every route exists in three languages (`/`, `/es`, `/pt-br`) and is prerendered to static HTML. `Ctrl K` opens a palette that searches pages, projects, posts and the text of every doc and post section.
+Every route exists in three languages (`/` in Portuguese, `/en`, `/es`) and is prerendered to static HTML. `Ctrl K` opens a palette that searches pages, projects, posts and the text of every doc and post section.
 
 ## Stack
 
