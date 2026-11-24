@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router";
-import { IconArrowDown, IconArrowUpRight } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUpRight, IconBrain, IconServer2, IconTool } from "@tabler/icons-react";
 import { pagePath } from "~/content/pages";
 import { usePage } from "~/content/useCopy";
 import { irisNavigate } from "~/components/layout/iris";
@@ -10,6 +10,7 @@ import { EXPERIENCE } from "~/content/experience";
 const PROMPT = "bk@bkunz.dev ~ $ whoami";
 const NAME = "Bernardo Kunz";
 const MOTTO = "Measure twice, optimize once.";
+const ROLE_ICONS = [IconBrain, IconTool, IconServer2];
 
 type LayerStyle = React.CSSProperties & { "--depth": number; "--delay"?: string; "--chars"?: number };
 
@@ -61,8 +62,8 @@ export function Hero() {
           <div className="parallax max-w-[74ch]" style={drift(20)}>
             <HeroTerminal
               lines={[
-                { cmd: "cat role.txt", out: hero.role, tone: "fg" },
-                { cmd: "echo $FOCUS", out: hero.answer, tone: "accent" },
+                { cmd: "cat role.txt", chips: hero.roles.map((label, i) => ({ label, Icon: ROLE_ICONS[i] ?? IconBrain })) },
+                { cmd: "echo $FOCUS", out: hero.focus, tone: "accent" },
                 { cmd: "cat about.md", out: hero.about, tone: "muted" },
               ]}
             />
